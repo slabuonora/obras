@@ -129,6 +129,27 @@
     .checklist-mini { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 4px; }
     .checklist-mini .check-icon { color: var(--success); }
 
+    /* ── WhatsApp indicator ── */
+    .wa-indicator { display: flex; align-items: center; gap: 4px; font-size: 10.5px; color: var(--text-3); margin-top: 6px; }
+    .wa-indicator .wa-dot { width: 6px; height: 6px; border-radius: 50%; background: #25d366; flex-shrink: 0; }
+    .wa-indicator .wa-dot.stale { background: var(--text-3); }
+    .wa-timeline { max-height: 400px; overflow-y: auto; margin-top: 12px; }
+    .wa-msg { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+    .wa-msg:last-child { border-bottom: none; }
+    .wa-msg-icon { font-size: 16px; flex-shrink: 0; width: 28px; text-align: center; padding-top: 2px; }
+    .wa-msg-body { flex: 1; }
+    .wa-msg-body .wa-msg-text { color: var(--text); }
+    .wa-msg-body .wa-msg-meta { color: var(--text-3); font-size: 11px; margin-top: 2px; }
+    .wa-msg-badge { font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.3px; display: inline-block; }
+    .wa-badge-check_in { background: #e3f5ea; color: var(--success); }
+    .wa-badge-check_out { background: #fef3d1; color: #92690a; }
+    .wa-badge-incidencia { background: #fde8e8; color: var(--danger); }
+    .wa-badge-foto { background: #eaf0fb; color: var(--accent); }
+    .wa-badge-nota { background: #f3f4f6; color: var(--text-2); }
+    .wa-badge-checklist { background: #e3f5ea; color: var(--success); }
+    .wa-badge-recordatorio { background: #fef3d1; color: #92690a; }
+    .wa-section-title { font-size: 13px; font-weight: 600; color: var(--text-2); margin-top: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+
     /* ── Modal ── */
     .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; align-items: center; justify-content: center; }
     .modal-backdrop.active { display: flex; }
@@ -155,125 +176,6 @@
     html.dark .status-entregada { background: #2a2d33; }
     html.dark .status-cancelada { background: #2a2d33; }
 
-    /* ── Detail panel (slide-in from right) ── */
-    .detail-overlay { position: fixed; inset: 0; z-index: 60; display: none; }
-    .detail-overlay.active { display: flex; }
-    .detail-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
-    .detail-panel { position: absolute; right: 0; top: 0; bottom: 0; width: 720px; max-width: 100vw; background: var(--surface); overflow-y: auto; box-shadow: -4px 0 24px rgba(0,0,0,0.15); animation: slidePanel 0.2s ease; }
-    @keyframes slidePanel { from { transform: translateX(100%); } to { transform: translateX(0); } }
-    .detail-header { padding: 20px 24px 0; display: flex; align-items: flex-start; gap: 12px; }
-    .detail-header h2 { font-size: 18px; font-weight: 700; flex: 1; line-height: 1.3; }
-    .detail-header .obra-numero-lg { font-size: 12px; font-family: var(--mono); color: var(--text-3); }
-    .detail-header .detail-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-3); padding: 4px 8px; border-radius: 4px; flex-shrink: 0; }
-    .detail-header .detail-close:hover { background: var(--bg); color: var(--text); }
-    .detail-info { padding: 12px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; }
-    .detail-info .di-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; }
-    .detail-info .di-value { color: var(--text); }
-
-    /* ── Sub-tabs inside detail ── */
-    .detail-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 24px; margin-top: 12px; }
-    .detail-tab { padding: 10px 16px; font-size: 12.5px; font-weight: 500; font-family: inherit; border: none; background: transparent; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
-    .detail-tab:hover { color: var(--text); }
-    .detail-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
-    .detail-tab-panel { display: none; padding: 16px 24px; }
-    .detail-tab-panel.active { display: block; }
-
-    /* ── Timeline ── */
-    .timeline { display: flex; flex-direction: column; gap: 0; }
-    .timeline-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .timeline-item:last-child { border-bottom: none; }
-    .timeline-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-    .timeline-icon.check_in { background: #dbeafe; color: #2563eb; }
-    .timeline-icon.check_out { background: #fef3c7; color: #d97706; }
-    .timeline-icon.foto { background: #ede9fe; color: #7c3aed; }
-    .timeline-icon.nota { background: #e5e7eb; color: #6b7280; }
-    .timeline-icon.incidencia { background: #fee2e2; color: #dc2626; }
-    .timeline-icon.adicional { background: #fef3c7; color: #92400e; }
-    .timeline-icon.estado_cambio { background: #dbeafe; color: #1d4ed8; }
-    .timeline-icon.entrega { background: #d1fae5; color: #059669; }
-    .timeline-icon.firma { background: #d1fae5; color: #047857; }
-    html.dark .timeline-icon.check_in { background: #1e3050; } html.dark .timeline-icon.check_out { background: #433814; }
-    html.dark .timeline-icon.foto { background: #2e1f5e; } html.dark .timeline-icon.nota { background: #2a2d33; }
-    html.dark .timeline-icon.incidencia { background: #3d1c1c; } html.dark .timeline-icon.estado_cambio { background: #1e3050; }
-    html.dark .timeline-icon.entrega { background: #1a3328; } html.dark .timeline-icon.firma { background: #1a3328; }
-    .timeline-body { flex: 1; min-width: 0; }
-    .timeline-meta { font-size: 11px; color: var(--text-3); display: flex; gap: 8px; flex-wrap: wrap; }
-    .timeline-desc { font-size: 13px; color: var(--text); margin-top: 2px; }
-    .timeline-photos { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-    .timeline-photo { width: 64px; height: 64px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
-    .timeline-photo:hover { opacity: 0.8; }
-    .timeline-actions { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
-
-    /* ── Checklist ── */
-    .checklist-section { margin-bottom: 16px; }
-    .checklist-ambiente { font-size: 14px; font-weight: 600; padding: 8px 0; display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .checklist-ambiente:hover { color: var(--accent); }
-    .checklist-ambiente .amb-progress { font-size: 11px; font-weight: 500; color: var(--text-3); font-family: var(--mono); }
-    .checklist-items { padding-left: 4px; }
-    .checklist-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--border); }
-    .checklist-item:last-child { border-bottom: none; }
-    .checklist-item input[type="checkbox"] { margin-top: 3px; width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; accent-color: var(--accent); }
-    .checklist-item.checked .ck-label { text-decoration: line-through; color: var(--text-3); }
-    .checklist-item .ck-label { flex: 1; }
-    .checklist-item .ck-meta { font-size: 10px; color: var(--text-3); }
-    .checklist-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 4px; }
-    .checklist-bar-fill { height: 100%; background: var(--success); border-radius: 2px; transition: width 0.3s; }
-
-    /* ── Production bars (in detail) ── */
-    .prod-service { padding: 8px 0; border-bottom: 1px solid var(--border); }
-    .prod-service:last-child { border-bottom: none; }
-    .prod-service-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
-    .prod-stations { display: flex; gap: 4px; margin-top: 4px; }
-    .prod-station { flex: 1; height: 6px; border-radius: 3px; background: var(--border); }
-    .prod-station.done { background: var(--success); }
-    .prod-station-labels { display: flex; gap: 4px; margin-top: 2px; }
-    .prod-station-labels span { flex: 1; font-size: 9px; text-align: center; color: var(--text-3); text-transform: uppercase; }
-    .despacho-badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 500; }
-    .despacho-pendiente { background: #fef3d1; color: #856404; }
-    .despacho-despachado { background: var(--accent-light); color: var(--accent); }
-    .despacho-en_obra { background: #dbeafe; color: #1d4ed8; }
-    .despacho-instalado { background: #d1fae5; color: #059669; }
-
-    /* ── Equipo (in detail) ── */
-    .equipo-list { display: flex; flex-direction: column; gap: 6px; }
-    .equipo-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--bg); border-radius: 6px; font-size: 13px; }
-    .equipo-row .equipo-avatar { margin-left: 0; flex-shrink: 0; }
-    .equipo-row .equipo-name { font-weight: 500; flex: 1; }
-    .equipo-row .equipo-rol { font-size: 11px; color: var(--text-3); }
-    .equipo-row .equipo-remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
-    .equipo-row .equipo-remove:hover { background: #fee2e2; }
-    .equipo-add-row { display: flex; gap: 8px; margin-top: 8px; }
-    .equipo-add-row select { flex: 1; }
-
-    /* ── Costos (in detail) ── */
-    .costos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .costos-block { padding: 14px; background: var(--bg); border-radius: 8px; }
-    .costos-block h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-2); }
-    .costos-line { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
-    .costos-line.total { font-weight: 700; border-top: 1px solid var(--border); padding-top: 6px; margin-top: 4px; }
-
-    /* ── Mobile View ── */
-    .mobile-view { display: none; }
-    .mobile-selector { padding: 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
-    .mobile-selector label { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-    .mobile-obras-list { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
-    .mobile-obra { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-    .mobile-obra-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-    .mobile-obra-name { font-weight: 600; font-size: 15px; }
-    .mobile-obra-address { font-size: 12px; color: var(--text-3); margin-bottom: 10px; }
-    .mobile-actions { display: flex; gap: 8px; }
-    .mobile-actions .btn { flex: 1; padding: 12px 10px; font-size: 14px; font-weight: 600; justify-content: center; border-radius: 10px; }
-    .btn-checkin { background: var(--success); color: white; border: none; }
-    .btn-checkin:hover { background: #22804a; }
-    .btn-checkout { background: var(--warn); color: white; border: none; }
-    .btn-checkout:hover { background: #b07a14; }
-    .mobile-status-indicator { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 10px; background: var(--accent-light); border-radius: 6px; margin-bottom: 10px; color: var(--accent); }
-    .mobile-status-indicator .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-    .mobile-photo-btn { background: var(--surface); border: 1px dashed var(--border); border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; font-size: 13px; color: var(--text-3); margin-top: 8px; }
-    .mobile-photo-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .mobile-checklist-preview { margin-top: 10px; padding: 8px 10px; background: var(--bg); border-radius: 6px; font-size: 12px; }
-
     /* ── Responsive ── */
     @media (max-width: 1100px) {
       .kanban { grid-template-columns: repeat(2, 1fr); }
@@ -287,14 +189,6 @@
       .app-header { padding: 10px 16px; flex-wrap: wrap; }
       .nav-tabs { order: 3; width: 100%; justify-content: center; margin-left: 0; margin-top: 8px; }
       .container { padding: 12px; }
-      .detail-panel { width: 100vw; }
-      .detail-info { grid-template-columns: 1fr; }
-      .costos-grid { grid-template-columns: 1fr; }
-      .desktop-only { display: none !important; }
-      .mobile-view { display: block !important; }
-    }
-    @media (min-width: 769px) {
-      .mobile-only { display: none !important; }
     }
   </style>
 </head>
@@ -308,7 +202,6 @@
     <button class="nav-tab active" onclick="switchTab('kanban')" id="tab-kanban">Kanban</button>
     <button class="nav-tab" onclick="switchTab('lista')" id="tab-lista">Lista</button>
     <button class="nav-tab" onclick="switchTab('metricas')" id="tab-metricas">Métricas</button>
-    <button class="nav-tab mobile-only" onclick="switchTab('campo')" id="tab-campo">📱 Campo</button>
   </nav>
   <div class="header-actions">
     <a href="comercial.html" class="btn btn-secondary btn-sm" style="text-decoration:none">← Comercial</a>
@@ -384,19 +277,6 @@
     <div class="empty">📊 Métricas de colocadores — se habilitará con datos reales</div>
   </div>
 
-  <!-- ═══ TAB: CAMPO (mobile check-in/out) ═══ -->
-  <div class="tab-panel mobile-view" id="panel-campo">
-    <div class="mobile-selector">
-      <label>👷 Seleccionar colocador</label>
-      <select id="mobileColocador" onchange="loadMobileObras()">
-        <option value="">Elegí tu nombre...</option>
-      </select>
-    </div>
-    <div class="mobile-obras-list" id="mobileObrasList">
-      <div class="empty">Seleccioná un colocador para ver tus obras</div>
-    </div>
-  </div>
-
 </div><!-- /container -->
 
 <!-- ═══ MODAL: NUEVA OBRA ═══ -->
@@ -449,81 +329,11 @@
   </div>
 </div>
 
-<!-- ═══ DETAIL PANEL (slide-in) ═══ -->
-<div class="detail-overlay" id="detailOverlay" onclick="closeDetail()">
-  <div class="detail-backdrop"></div>
-  <div class="detail-panel" onclick="event.stopPropagation()">
-    <div class="detail-header">
-      <div>
-        <h2 id="detailName">—</h2>
-        <span class="obra-numero-lg" id="detailNumero"></span>
-      </div>
-      <span class="status" id="detailEstado"></span>
-      <button class="detail-close" onclick="closeDetail()">&times;</button>
-    </div>
-
-    <div class="detail-info" id="detailInfo"></div>
-
-    <div class="detail-tabs">
-      <button class="detail-tab active" onclick="switchDetailTab('general')">General</button>
-      <button class="detail-tab" onclick="switchDetailTab('timeline')">Timeline</button>
-      <button class="detail-tab" onclick="switchDetailTab('checklist')">Checklist</button>
-      <button class="detail-tab" onclick="switchDetailTab('costos')">Costos</button>
-    </div>
-
-    <!-- SUB-TAB: General -->
-    <div class="detail-tab-panel active" id="dtab-general">
-      <h4 style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-2)">Producción</h4>
-      <div id="detailProd"><div class="empty" style="padding:12px">Sin servicios vinculados</div></div>
-
-      <h4 style="font-size:13px;font-weight:600;margin:16px 0 10px;color:var(--text-2)">Equipo asignado</h4>
-      <div id="detailEquipo"></div>
-      <div class="equipo-add-row">
-        <select id="addColocadorSelect"><option value="">Agregar colocador...</option></select>
-        <select id="addColocadorRol"><option value="instalador">Instalador</option><option value="lider">Líder</option><option value="apoyo">Apoyo</option><option value="postventa">Postventa</option></select>
-        <button class="btn btn-sm btn-primary" onclick="addColocador()">+</button>
-      </div>
-    </div>
-
-    <!-- SUB-TAB: Timeline -->
-    <div class="detail-tab-panel" id="dtab-timeline">
-      <div class="timeline-actions">
-        <button class="btn btn-sm btn-secondary" onclick="addEvento('nota')">📝 Nota</button>
-        <button class="btn btn-sm btn-secondary" onclick="addEvento('incidencia')">⚠️ Incidencia</button>
-        <button class="btn btn-sm btn-secondary" onclick="addEvento('adicional')">➕ Adicional</button>
-      </div>
-      <div class="timeline" id="detailTimeline"><div class="empty">Sin eventos</div></div>
-    </div>
-
-    <!-- SUB-TAB: Checklist -->
-    <div class="detail-tab-panel" id="dtab-checklist">
-      <div id="detailChecklist"><div class="empty">Sin checklists</div></div>
-    </div>
-
-    <!-- SUB-TAB: Costos -->
-    <div class="detail-tab-panel" id="dtab-costos">
-      <div id="detailCostos"><div class="empty">Sin datos de costos</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ MODAL: EVENTO RÁPIDO ═══ -->
-<div class="modal-backdrop" id="modalEvento">
-  <div class="modal" style="max-width:480px" onclick="event.stopPropagation()">
-    <h3 id="eventoTitle">Nuevo evento <button class="modal-close" onclick="closeModal('modalEvento')">&times;</button></h3>
-    <input type="hidden" id="eventoTipo" />
-    <div class="form-group" style="margin-bottom:14px">
-      <label>Colocador</label>
-      <select id="eventoColocador"></select>
-    </div>
-    <div class="form-group" style="margin-bottom:14px">
-      <label>Descripción</label>
-      <textarea id="eventoDesc" rows="3" placeholder="Describe el evento..."></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="closeModal('modalEvento')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveEvento()">Guardar</button>
-    </div>
+<!-- ═══ MODAL: DETALLE OBRA (placeholder para fase 2) ═══ -->
+<div class="modal-backdrop" id="modalDetalle">
+  <div class="modal" style="max-width:900px" onclick="event.stopPropagation()">
+    <h3 id="detalleTitle">Detalle de obra <button class="modal-close" onclick="closeModal('modalDetalle')">&times;</button></h3>
+    <div id="detalleContent"><div class="empty">Detalle de obra — se implementa en fase 2</div></div>
   </div>
 </div>
 
@@ -649,6 +459,17 @@ async function loadKanban() {
   try {
     obrasData = await sbQuery('v_obra_kanban', 'select=*&order=prioridad.desc,updated_at.desc');
 
+    // Enriquecer con último reporte WhatsApp por obra
+    try {
+      const waLast = await sbQuery('whatsapp_messages_log',
+        'direction=eq.inbound&select=obra_id,created_at&order=created_at.desc');
+      const waMap = {};
+      for (const m of (waLast || [])) {
+        if (m.obra_id && !waMap[m.obra_id]) waMap[m.obra_id] = m.created_at;
+      }
+      obrasData.forEach(o => { o.ultimo_wa = waMap[o.id] || null; });
+    } catch(e) { console.warn('WA enrich error:', e); }
+
     KANBAN_COLS.forEach(estado => {
       const container = document.getElementById(`cards-${estado}`);
       const items = obrasData.filter(o => o.estado === estado);
@@ -700,6 +521,7 @@ function renderCard(o) {
         ${o.horas_reales > 0 ? `<span>${o.horas_reales}h</span>` : ''}
       </div>
     </div>
+    ${o.ultimo_wa ? `<div class="wa-indicator"><span class="wa-dot${isWaStale(o.ultimo_wa) ? ' stale' : ''}"></span>📱 ${timeAgo(o.ultimo_wa)}</div>` : ''}
   </div>`;
 }
 
@@ -825,328 +647,79 @@ function sortList(field) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// DETAIL PANEL — Full implementation
+// DETALLE (placeholder — fase 2)
 // ═══════════════════════════════════════════════════════════════
-let currentObraId = null;
-let allColocadores = [];
+// ── WhatsApp helpers ──
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'ahora';
+  if (mins < 60) return `hace ${mins}min`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `hace ${hrs}h`;
+  const days = Math.floor(hrs / 24);
+  return `hace ${days}d`;
+}
 
-function closeDetail() { document.getElementById('detailOverlay').classList.remove('active'); currentObraId = null; }
+function isWaStale(dateStr) {
+  if (!dateStr) return true;
+  return (Date.now() - new Date(dateStr).getTime()) > 4 * 60 * 60 * 1000; // >4h = stale
+}
 
-function switchDetailTab(tab) {
-  document.querySelectorAll('.detail-tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(`dtab-${tab}`).classList.add('active');
-  event.target.classList.add('active');
+const WA_ICONS = {
+  check_in: '✅', check_out: '👋', incidencia: '⚠️', foto: '📸',
+  nota: '📝', completar_checklist_items: '☑️', consulta: '❓',
+  recordatorio: '🔔', produccion_completada: '🏭', followup_incidencia: '📋',
+};
+
+async function loadWhatsAppTimeline(obraId) {
+  try {
+    const msgs = await sbQuery('whatsapp_messages_log',
+      `obra_id=eq.${obraId}&direction=eq.inbound&order=created_at.desc&limit=20&select=*`);
+    return msgs || [];
+  } catch(e) { console.error('WA timeline error:', e); return []; }
+}
+
+function renderWaTimeline(msgs) {
+  if (!msgs || msgs.length === 0) return '<div style="color:var(--text-3);font-size:12px;padding:8px 0">Sin reportes WhatsApp aún</div>';
+  return `<div class="wa-timeline">${msgs.map(m => {
+    const icon = WA_ICONS[m.clasificacion] || '💬';
+    const badgeClass = m.clasificacion === 'completar_checklist_items' ? 'checklist' : (m.clasificacion || 'nota');
+    const time = new Date(m.created_at).toLocaleString('es-UY', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', timeZone:'America/Montevideo' });
+    return `<div class="wa-msg">
+      <div class="wa-msg-icon">${icon}</div>
+      <div class="wa-msg-body">
+        <div class="wa-msg-text">${esc(m.body || m.transcription || '—')}</div>
+        <div class="wa-msg-meta">${time} · <span class="wa-msg-badge wa-badge-${badgeClass}">${m.clasificacion || '?'}</span>${m.media_type === 'audio' ? ' 🎙️' : ''}${m.media_type === 'image' ? ' 📷' : ''}</div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
 }
 
 async function openDetalle(id) {
-  currentObraId = id;
   const obra = obrasData.find(o => o.id === id);
   if (!obra) return;
-
-  // Reset to General tab
-  document.querySelectorAll('.detail-tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('dtab-general').classList.add('active');
-  document.querySelector('.detail-tab').classList.add('active');
-
-  // Header
-  document.getElementById('detailName').textContent = obra.nombre;
-  document.getElementById('detailNumero').textContent = `#OBR-${obra.numero}`;
-  const estadoEl = document.getElementById('detailEstado');
-  estadoEl.className = `status status-${obra.estado}`;
-  estadoEl.textContent = ESTADO_LABELS[obra.estado];
-
-  // Info grid
-  document.getElementById('detailInfo').innerHTML = `
-    <div><div class="di-label">Cliente</div><div class="di-value">${esc(obra.cliente_nombre || '—')}</div></div>
-    <div><div class="di-label">Dirección</div><div class="di-value">${esc(obra.direccion || '—')}</div></div>
-    <div><div class="di-label">Ciudad</div><div class="di-value">${esc(obra.ciudad || '—')}</div></div>
-    <div><div class="di-label">Prioridad</div><div class="di-value">${obra.prioridad}</div></div>
-    <div><div class="di-label">Inicio estimado</div><div class="di-value">${obra.fecha_inicio_estimada || '—'}</div></div>
-    <div><div class="di-label">Fin estimado</div><div class="di-value">${obra.fecha_fin_estimada || '—'}</div></div>
-    <div><div class="di-label">Inicio real</div><div class="di-value">${obra.fecha_inicio_real || '—'}</div></div>
-    <div><div class="di-label">Monto quote</div><div class="di-value">${obra.monto_quote ? `${obra.moneda} ${Number(obra.monto_quote).toLocaleString()}` : '—'}</div></div>
+  document.getElementById('detalleTitle').innerHTML = `🏗️ ${esc(obra.nombre)} <span class="mono" style="font-size:12px;color:var(--text-3)">#OBR-${obra.numero}</span><button class="modal-close" onclick="closeModal('modalDetalle')">&times;</button>`;
+  
+  // Contenido básico + placeholder WhatsApp
+  document.getElementById('detalleContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;margin-bottom:16px">
+      <div><strong>Estado:</strong> ${ESTADO_LABELS[obra.estado]}</div>
+      <div><strong>Cliente:</strong> ${esc(obra.cliente_nombre || '—')}</div>
+      <div><strong>Producción:</strong> ${obra.pct_produccion}%</div>
+      <div><strong>Horas reales:</strong> ${obra.horas_reales || 0}h</div>
+      <div><strong>Checklist:</strong> ${obra.checklist_completados}/${obra.checklist_total}</div>
+      <div><strong>Días en obra:</strong> ${obra.dias_en_obra || 0}</div>
+    </div>
+    <div class="wa-section-title">📱 Reportes WhatsApp</div>
+    <div id="waTimelineContainer"><div style="padding:12px;text-align:center"><div class="spinner"></div></div></div>
   `;
+  openModal('modalDetalle');
 
-  document.getElementById('detailOverlay').classList.add('active');
-
-  // Load all data in parallel
-  await Promise.all([
-    loadDetailProd(id),
-    loadDetailEquipo(id),
-    loadDetailTimeline(id),
-    loadDetailChecklist(id),
-    loadDetailCostos(id)
-  ]);
-}
-
-// ── Production detail ──
-async function loadDetailProd(obraId) {
-  try {
-    const servicios = await sbQuery('v_obra_produccion_progress', `obra_id=eq.${obraId}&select=*`);
-    if (!servicios.length) {
-      document.getElementById('detailProd').innerHTML = '<div class="empty" style="padding:12px;font-size:12px">Sin servicios vinculados</div>';
-      return;
-    }
-    document.getElementById('detailProd').innerHTML = servicios.map(s => {
-      const stations = s.stations || {};
-      return `<div class="prod-service">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div class="prod-service-name">${esc(s.service_name || `SVC ${s.service_id}`)}</div>
-          <span class="despacho-badge despacho-${s.despacho_estado}">${s.despacho_estado}</span>
-        </div>
-        <div class="prod-stations">
-          <div class="prod-station ${stations.corte === 'completed' ? 'done' : ''}"></div>
-          <div class="prod-station ${stations.enchape === 'completed' ? 'done' : ''}"></div>
-          <div class="prod-station ${stations.mecanizado === 'completed' ? 'done' : ''}"></div>
-          <div class="prod-station ${stations.packing === 'completed' ? 'done' : ''}"></div>
-        </div>
-        <div class="prod-station-labels"><span>Corte</span><span>Enchape</span><span>CNC</span><span>Packing</span></div>
-      </div>`;
-    }).join('');
-  } catch (e) { console.error('Prod detail error:', e); }
-}
-
-// ── Equipo detail ──
-async function loadDetailEquipo(obraId) {
-  try {
-    // Load all colocadores for the add selector
-    if (!allColocadores.length) {
-      allColocadores = await sbQuery('colocadores', 'activo=eq.true&select=id,nombre,rol,color&order=nombre');
-    }
-
-    const asignaciones = await sbQuery('obra_asignaciones', `obra_id=eq.${obraId}&activo=eq.true&select=*,colocadores(id,nombre,color,rol,costo_hora)`);
-
-    const container = document.getElementById('detailEquipo');
-    if (!asignaciones.length) {
-      container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px 0">Sin colocadores asignados</div>';
-    } else {
-      container.innerHTML = '<div class="equipo-list">' + asignaciones.map(a => {
-        const c = a.colocadores || {};
-        return `<div class="equipo-row">
-          <div class="equipo-avatar" style="background:${c.color || '#888'}">${(c.nombre||'?')[0]}</div>
-          <span class="equipo-name">${esc(c.nombre)}</span>
-          <span class="equipo-rol">${a.rol_en_obra}</span>
-          <button class="equipo-remove" onclick="removeColocador('${a.id}')" title="Quitar">✕</button>
-        </div>`;
-      }).join('') + '</div>';
-    }
-
-    // Populate add selector (exclude already assigned)
-    const assignedIds = new Set(asignaciones.map(a => a.colocador_id));
-    const available = allColocadores.filter(c => !assignedIds.has(c.id));
-    document.getElementById('addColocadorSelect').innerHTML = '<option value="">Agregar colocador...</option>' +
-      available.map(c => `<option value="${c.id}">${esc(c.nombre)} (${c.rol})</option>`).join('');
-
-  } catch (e) { console.error('Equipo error:', e); }
-}
-
-async function addColocador() {
-  const colocadorId = document.getElementById('addColocadorSelect').value;
-  if (!colocadorId || !currentObraId) return;
-  const rol = document.getElementById('addColocadorRol').value;
-  try {
-    // Check if there's an inactive assignment (soft-deleted)
-    const existing = await sbQuery('obra_asignaciones', `obra_id=eq.${currentObraId}&colocador_id=eq.${colocadorId}&select=id,activo`);
-    if (existing.length > 0) {
-      // Reactivate existing record
-      await sbMutate('obra_asignaciones', 'PATCH', { activo: true, rol_en_obra: rol }, `id=eq.${existing[0].id}`);
-    } else {
-      await sbMutate('obra_asignaciones', 'POST', [{ obra_id: currentObraId, colocador_id: colocadorId, rol_en_obra: rol }]);
-    }
-    toast('Colocador asignado', 'success');
-    await loadDetailEquipo(currentObraId);
-    await loadKanban(); renderLista();
-  } catch (e) { toast('Error: ' + e.message, 'error'); }
-}
-
-async function removeColocador(asignacionId) {
-  try {
-    await sbMutate('obra_asignaciones', 'PATCH', { activo: false }, `id=eq.${asignacionId}`);
-    toast('Colocador removido', 'info');
-    await loadDetailEquipo(currentObraId);
-    await loadKanban(); renderLista();
-  } catch (e) { toast('Error: ' + e.message, 'error'); }
-}
-
-// ── Timeline ──
-const EVENTO_ICONS = {
-  check_in: '📍', check_out: '🚪', foto: '📸', nota: '📝',
-  incidencia: '⚠️', adicional: '➕', estado_cambio: '🔄', entrega: '📦', firma: '✍️'
-};
-
-async function loadDetailTimeline(obraId) {
-  try {
-    const eventos = await sbQuery('obra_eventos', `obra_id=eq.${obraId}&order=created_at.desc&limit=50&select=*`);
-    const container = document.getElementById('detailTimeline');
-    if (!eventos.length) {
-      container.innerHTML = '<div class="empty" style="padding:16px;font-size:12px">Sin eventos registrados</div>';
-      return;
-    }
-    container.innerHTML = eventos.map(ev => {
-      const dt = new Date(ev.created_at);
-      const fecha = dt.toLocaleDateString('es-UY', { day:'2-digit', month:'short' });
-      const hora = dt.toLocaleTimeString('es-UY', { hour:'2-digit', minute:'2-digit' });
-      const fotos = typeof ev.fotos === 'string' ? JSON.parse(ev.fotos) : (ev.fotos || []);
-
-      return `<div class="timeline-item">
-        <div class="timeline-icon ${ev.tipo}">${EVENTO_ICONS[ev.tipo] || '•'}</div>
-        <div class="timeline-body">
-          <div class="timeline-meta">
-            <span>${fecha} ${hora}</span>
-            ${ev.colocador_nombre ? `<span>· ${esc(ev.colocador_nombre)}</span>` : ''}
-            <span style="text-transform:capitalize">· ${ev.tipo.replace('_',' ')}</span>
-          </div>
-          ${ev.descripcion ? `<div class="timeline-desc">${esc(ev.descripcion)}</div>` : ''}
-          ${fotos.length ? `<div class="timeline-photos">${fotos.map(f => `<img class="timeline-photo" src="${SUPABASE_URL}/storage/v1/object/public/${f}" onclick="window.open(this.src)" />`).join('')}</div>` : ''}
-        </div>
-      </div>`;
-    }).join('');
-  } catch (e) { console.error('Timeline error:', e); }
-}
-
-// ── Add evento ──
-function addEvento(tipo) {
-  document.getElementById('eventoTipo').value = tipo;
-  const labels = { nota: '📝 Nueva Nota', incidencia: '⚠️ Reportar Incidencia', adicional: '➕ Trabajo Adicional' };
-  document.getElementById('eventoTitle').innerHTML = `${labels[tipo] || 'Nuevo evento'} <button class="modal-close" onclick="closeModal('modalEvento')">&times;</button>`;
-  document.getElementById('eventoDesc').value = '';
-
-  // Populate colocador select
-  document.getElementById('eventoColocador').innerHTML = '<option value="">Sin colocador</option>' +
-    allColocadores.map(c => `<option value="${c.id}" data-nombre="${esc(c.nombre)}">${esc(c.nombre)}</option>`).join('');
-
-  openModal('modalEvento');
-}
-
-async function saveEvento() {
-  const tipo = document.getElementById('eventoTipo').value;
-  const desc = document.getElementById('eventoDesc').value.trim();
-  if (!desc) { toast('Descripción requerida', 'error'); return; }
-
-  const colSel = document.getElementById('eventoColocador');
-  const colocadorId = colSel.value || null;
-  const colocadorNombre = colSel.selectedOptions[0]?.dataset?.nombre || null;
-
-  try {
-    await sbMutate('obra_eventos', 'POST', [{
-      obra_id: currentObraId,
-      tipo,
-      descripcion: desc,
-      colocador_id: colocadorId,
-      colocador_nombre: colocadorNombre
-    }]);
-    toast('Evento registrado', 'success');
-    closeModal('modalEvento');
-    await loadDetailTimeline(currentObraId);
-  } catch (e) { toast('Error: ' + e.message, 'error'); }
-}
-
-// ── Checklist ──
-async function loadDetailChecklist(obraId) {
-  try {
-    const checklists = await sbQuery('obra_checklist', `obra_id=eq.${obraId}&select=*,obra_checklist_items(*)&order=orden`);
-    const container = document.getElementById('detailChecklist');
-
-    if (!checklists.length) {
-      container.innerHTML = '<div class="empty" style="padding:16px;font-size:12px">Sin checklists. Creá la obra desde una quote para auto-generar.</div>';
-      return;
-    }
-
-    container.innerHTML = checklists.map(cl => {
-      const items = cl.obra_checklist_items || [];
-      items.sort((a,b) => (a.orden||0) - (b.orden||0));
-      const done = items.filter(i => i.checked).length;
-      const total = items.length;
-      const pct = total > 0 ? Math.round(done / total * 100) : 0;
-
-      return `<div class="checklist-section">
-        <div class="checklist-ambiente" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? '' : 'none'">
-          ${cl.completado ? '✅' : '📋'} ${esc(cl.ambiente)}
-          <span class="amb-progress">${done}/${total} (${pct}%)</span>
-        </div>
-        <div class="checklist-items">
-          <div class="checklist-bar"><div class="checklist-bar-fill" style="width:${pct}%"></div></div>
-          ${items.map(it => `<div class="checklist-item ${it.checked ? 'checked' : ''}">
-            <input type="checkbox" ${it.checked ? 'checked' : ''} onchange="toggleCheckItem('${it.id}', this.checked, '${cl.id}')" />
-            <span class="ck-label">${esc(it.label)}</span>
-            ${it.checked_at ? `<span class="ck-meta">${new Date(it.checked_at).toLocaleDateString('es-UY', {day:'2-digit',month:'short'})}</span>` : ''}
-          </div>`).join('')}
-        </div>
-      </div>`;
-    }).join('');
-  } catch (e) { console.error('Checklist error:', e); }
-}
-
-async function toggleCheckItem(itemId, checked, checklistId) {
-  try {
-    const update = { checked, checked_at: checked ? new Date().toISOString() : null };
-    await sbMutate('obra_checklist_items', 'PATCH', update, `id=eq.${itemId}`);
-
-    // Check if all items in checklist are done
-    const items = await sbQuery('obra_checklist_items', `checklist_id=eq.${checklistId}&select=checked`);
-    const allDone = items.every(i => i.checked);
-    if (allDone) {
-      await sbMutate('obra_checklist', 'PATCH', { completado: true, completado_at: new Date().toISOString() }, `id=eq.${checklistId}`);
-    } else {
-      await sbMutate('obra_checklist', 'PATCH', { completado: false, completado_at: null }, `id=eq.${checklistId}`);
-    }
-
-    await loadDetailChecklist(currentObraId);
-    await loadKanban(); renderLista();
-  } catch (e) { toast('Error: ' + e.message, 'error'); }
-}
-
-// ── Costos ──
-async function loadDetailCostos(obraId) {
-  try {
-    const obra = obrasData.find(o => o.id === obraId);
-    if (!obra) return;
-
-    let horasHtml = '<div style="font-size:12px;color:var(--text-3)">Sin horas registradas</div>';
-    let costoHoras = 0;
-
-    try {
-      const [resumen] = await sbQuery('v_obra_horas_resumen', `obra_id=eq.${obraId}&select=*`);
-      if (resumen && resumen.horas_totales > 0) {
-        const detalle = typeof resumen.detalle_colocadores === 'string' ? JSON.parse(resumen.detalle_colocadores) : (resumen.detalle_colocadores || []);
-
-        // Get colocador costs
-        const colMap = {};
-        allColocadores.forEach(c => { colMap[c.nombre] = c; });
-
-        horasHtml = detalle.map(d => {
-          const rate = colMap[d.colocador]?.costo_hora || 10.70;
-          const costo = d.horas * rate;
-          costoHoras += costo;
-          return `<div class="costos-line"><span>${esc(d.colocador)} — ${d.horas}h × $${rate}</span><span class="mono">$${costo.toFixed(2)}</span></div>`;
-        }).join('') + `<div class="costos-line total"><span>Total horas</span><span class="mono">$${costoHoras.toFixed(2)}</span></div>`;
-      }
-    } catch (_) {}
-
-    const adicionales = obra.costos_adicionales || 0;
-    const totalReal = costoHoras + Number(adicionales);
-    const montoQuote = Number(obra.monto_quote) || 0;
-    const margen = montoQuote > 0 ? ((montoQuote - totalReal) / montoQuote * 100) : 0;
-
-    document.getElementById('detailCostos').innerHTML = `
-      <div class="costos-grid">
-        <div class="costos-block">
-          <h4>Horas de trabajo</h4>
-          ${horasHtml}
-        </div>
-        <div class="costos-block">
-          <h4>Resumen financiero</h4>
-          <div class="costos-line"><span>Monto quote</span><span class="mono">${obra.moneda || '$'} ${montoQuote.toLocaleString()}</span></div>
-          <div class="costos-line"><span>Costo horas</span><span class="mono">$${costoHoras.toFixed(2)}</span></div>
-          <div class="costos-line"><span>Costos adicionales</span><span class="mono">$${Number(adicionales).toFixed(2)}</span></div>
-          <div class="costos-line total"><span>Costo real total</span><span class="mono">$${totalReal.toFixed(2)}</span></div>
-          ${montoQuote > 0 ? `<div class="costos-line" style="margin-top:8px"><span>Margen</span><span class="mono" style="color:${margen >= 0 ? 'var(--success)' : 'var(--danger)'}">${margen.toFixed(1)}%</span></div>` : ''}
-        </div>
-      </div>
-    `;
-  } catch (e) { console.error('Costos error:', e); }
+  // Cargar timeline WhatsApp async
+  const msgs = await loadWhatsAppTimeline(id);
+  document.getElementById('waTimelineContainer').innerHTML = renderWaTimeline(msgs);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1308,263 +881,6 @@ async function crearObra() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// MOBILE — Campo (check-in / check-out / foto)
-// ═══════════════════════════════════════════════════════════════
-let mobileColocadorId = null;
-let mobileColocadorNombre = null;
-let mobileCheckInState = {}; // {obraId: true} if currently checked in
-
-async function initMobile() {
-  // Populate colocador selector
-  if (!allColocadores.length) {
-    allColocadores = await sbQuery('colocadores', 'activo=eq.true&select=id,nombre,rol,color&order=nombre');
-  }
-  const sel = document.getElementById('mobileColocador');
-  sel.innerHTML = '<option value="">Elegí tu nombre...</option>' +
-    allColocadores.map(c => `<option value="${c.id}">${esc(c.nombre)} (${c.rol})</option>`).join('');
-
-  // Restore last selected colocador
-  const saved = localStorage.getItem('mobileColocadorId');
-  if (saved) {
-    sel.value = saved;
-    await loadMobileObras();
-  }
-
-  // Auto-switch to campo tab on mobile
-  if (window.innerWidth <= 768) {
-    switchTab('campo');
-  }
-}
-
-async function loadMobileObras() {
-  const sel = document.getElementById('mobileColocador');
-  mobileColocadorId = sel.value;
-  mobileColocadorNombre = sel.selectedOptions[0]?.textContent?.split(' (')[0] || null;
-  localStorage.setItem('mobileColocadorId', mobileColocadorId);
-
-  const container = document.getElementById('mobileObrasList');
-  if (!mobileColocadorId) {
-    container.innerHTML = '<div class="empty">Seleccioná un colocador para ver tus obras</div>';
-    return;
-  }
-
-  try {
-    // Get assigned obras
-    const asignaciones = await sbQuery('obra_asignaciones',
-      `colocador_id=eq.${mobileColocadorId}&activo=eq.true&select=obra_id,rol_en_obra`);
-
-    if (!asignaciones.length) {
-      container.innerHTML = '<div class="empty">No tenés obras asignadas</div>';
-      return;
-    }
-
-    const obraIds = asignaciones.map(a => a.obra_id);
-    const obras = await sbQuery('v_obra_kanban',
-      `id=in.(${obraIds.join(',')})&estado=in.(por_preparar,en_curso)&select=*&order=prioridad.desc,updated_at.desc`);
-
-    if (!obras.length) {
-      container.innerHTML = '<div class="empty">No tenés obras activas</div>';
-      return;
-    }
-
-    // Check current check-in state for each obra
-    mobileCheckInState = {};
-    for (const obra of obras) {
-      try {
-        const today = new Date().toISOString().split('T')[0];
-        const events = await sbQuery('obra_eventos',
-          `obra_id=eq.${obra.id}&colocador_id=eq.${mobileColocadorId}&tipo=in.(check_in,check_out)&created_at=gte.${today}T00:00:00&order=created_at.desc&limit=1&select=tipo`);
-        if (events.length && events[0].tipo === 'check_in') {
-          mobileCheckInState[obra.id] = true;
-        }
-      } catch (_) {}
-    }
-
-    container.innerHTML = obras.map(obra => {
-      const isCheckedIn = mobileCheckInState[obra.id];
-      const checkPct = obra.checklist_total > 0 ? Math.round(obra.checklist_completados / obra.checklist_total * 100) : 0;
-      const rol = asignaciones.find(a => a.obra_id === obra.id)?.rol_en_obra || '';
-
-      return `<div class="mobile-obra">
-        <div class="mobile-obra-header">
-          <div>
-            <div class="mobile-obra-name">${esc(obra.nombre)}</div>
-            <span class="mono" style="font-size:11px;color:var(--text-3)">#OBR-${obra.numero} · ${rol}</span>
-          </div>
-          <span class="status status-${obra.estado}">${ESTADO_LABELS[obra.estado]}</span>
-        </div>
-        <div class="mobile-obra-address">📍 ${esc(obra.direccion || 'Sin dirección')}</div>
-        ${isCheckedIn ? '<div class="mobile-status-indicator"><span class="pulse"></span> Estás en obra</div>' : ''}
-        <div class="mobile-actions">
-          ${isCheckedIn
-            ? `<button class="btn btn-checkout" onclick="mobileCheckOut('${obra.id}')">🚪 Check-out</button>`
-            : `<button class="btn btn-checkin" onclick="mobileCheckIn('${obra.id}')">📍 Check-in</button>`
-          }
-          <button class="btn btn-secondary" onclick="mobileAddPhoto('${obra.id}')" style="flex:0.5">📸</button>
-        </div>
-        ${obra.checklist_total > 0 ? `<div class="mobile-checklist-preview">
-          ☑ Checklist: ${obra.checklist_completados}/${obra.checklist_total} (${checkPct}%)
-          <div class="checklist-bar" style="margin-top:4px"><div class="checklist-bar-fill" style="width:${checkPct}%"></div></div>
-        </div>` : ''}
-      </div>`;
-    }).join('');
-
-  } catch (e) {
-    console.error('Mobile load error:', e);
-    container.innerHTML = '<div class="empty">Error al cargar obras</div>';
-  }
-}
-
-// ── GPS helper ──
-function getGPS() {
-  return new Promise((resolve) => {
-    if (!navigator.geolocation) { resolve(null); return; }
-    navigator.geolocation.getCurrentPosition(
-      pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }),
-      () => resolve(null),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-    );
-  });
-}
-
-// ── Photo compression ──
-function compressImage(file, maxWidth = 1200, quality = 0.7) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const scale = Math.min(1, maxWidth / img.width);
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(resolve, 'image/jpeg', quality);
-    };
-    img.src = URL.createObjectURL(file);
-  });
-}
-
-// ── Upload photo to Supabase Storage ──
-async function uploadPhoto(blob, path) {
-  const r = await fetch(`${SUPABASE_URL}/storage/v1/object/obras-fotos/${path}`, {
-    method: 'POST',
-    headers: {
-      'apikey': SUPABASE_ANON,
-      'Authorization': `Bearer ${SUPABASE_ANON}`,
-      'Content-Type': 'image/jpeg'
-    },
-    body: blob
-  });
-  if (!r.ok) throw new Error('Upload failed');
-  return `obras-fotos/${path}`;
-}
-
-// ── Check-in ──
-async function mobileCheckIn(obraId) {
-  toast('Obteniendo ubicación...', 'info');
-  const gps = await getGPS();
-
-  try {
-    const evento = {
-      obra_id: obraId,
-      tipo: 'check_in',
-      descripcion: 'Check-in desde campo',
-      colocador_id: mobileColocadorId,
-      colocador_nombre: mobileColocadorNombre,
-      ubicacion_lat: gps?.lat || null,
-      ubicacion_lng: gps?.lng || null,
-      ubicacion_accuracy: gps?.accuracy || null
-    };
-    await sbMutate('obra_eventos', 'POST', [evento]);
-
-    // If obra is still por_preparar, move to en_curso
-    const obra = obrasData.find(o => o.id === obraId);
-    if (obra && obra.estado === 'por_preparar') {
-      await sbMutate('obras', 'PATCH', {
-        estado: 'en_curso',
-        fecha_inicio_real: new Date().toISOString().split('T')[0]
-      }, `id=eq.${obraId}`);
-      await sbMutate('obra_eventos', 'POST', [{
-        obra_id: obraId, tipo: 'estado_cambio',
-        descripcion: 'Por preparar → En curso (check-in automático)',
-        colocador_id: mobileColocadorId, colocador_nombre: mobileColocadorNombre,
-        metadata: { anterior: 'por_preparar', nuevo: 'en_curso' }
-      }]);
-    }
-
-    toast('✅ Check-in registrado' + (gps ? ` (±${Math.round(gps.accuracy)}m)` : ' (sin GPS)'), 'success');
-    await loadMobileObras();
-    await loadKanban(); renderLista(); loadMetrics();
-  } catch (e) {
-    toast('Error en check-in: ' + e.message, 'error');
-  }
-}
-
-// ── Check-out ──
-async function mobileCheckOut(obraId) {
-  toast('Obteniendo ubicación...', 'info');
-  const gps = await getGPS();
-
-  try {
-    await sbMutate('obra_eventos', 'POST', [{
-      obra_id: obraId,
-      tipo: 'check_out',
-      descripcion: 'Check-out desde campo',
-      colocador_id: mobileColocadorId,
-      colocador_nombre: mobileColocadorNombre,
-      ubicacion_lat: gps?.lat || null,
-      ubicacion_lng: gps?.lng || null,
-      ubicacion_accuracy: gps?.accuracy || null
-    }]);
-
-    toast('🚪 Check-out registrado', 'success');
-    await loadMobileObras();
-  } catch (e) {
-    toast('Error en check-out: ' + e.message, 'error');
-  }
-}
-
-// ── Add photo from mobile ──
-function mobileAddPhoto(obraId) {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.capture = 'environment';
-  input.onchange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    toast('Comprimiendo y subiendo foto...', 'info');
-
-    try {
-      const blob = await compressImage(file);
-      const now = new Date();
-      const fecha = now.toISOString().split('T')[0];
-      const ts = now.getTime();
-      const path = `${obraId}/${fecha}_foto_${ts}.jpg`;
-      const storagePath = await uploadPhoto(blob, path);
-
-      // Create foto event
-      const gps = await getGPS();
-      await sbMutate('obra_eventos', 'POST', [{
-        obra_id: obraId,
-        tipo: 'foto',
-        descripcion: 'Foto desde campo',
-        colocador_id: mobileColocadorId,
-        colocador_nombre: mobileColocadorNombre,
-        fotos: [storagePath],
-        ubicacion_lat: gps?.lat || null,
-        ubicacion_lng: gps?.lng || null,
-        ubicacion_accuracy: gps?.accuracy || null
-      }]);
-
-      toast('📸 Foto subida', 'success');
-    } catch (err) {
-      toast('Error subiendo foto: ' + err.message, 'error');
-    }
-  };
-  input.click();
-}
-
-// ═══════════════════════════════════════════════════════════════
 // REALTIME
 // ═══════════════════════════════════════════════════════════════
 function subscribeRealtime() {
@@ -1586,36 +902,11 @@ async function init() {
     await Promise.all([loadMetrics(), loadKanban()]);
     renderLista();
     subscribeRealtime();
-    await initMobile();
-    checkUrlParams();
   } catch (e) {
     console.error('Init error:', e);
     toast('Error al cargar datos', 'error');
   } finally {
     hideLoading();
-  }
-}
-
-// Detectar si venimos desde comercial.html con una quote para crear obra
-function checkUrlParams() {
-  const params = new URLSearchParams(window.location.search);
-  const action = params.get('action');
-  const quoteId = params.get('quote_id');
-
-  if (action === 'crear_desde_quote' && quoteId) {
-    // Limpiar URL sin recargar
-    window.history.replaceState({}, '', window.location.pathname);
-    // Abrir modal nueva obra con quote pre-seleccionada
-    setTimeout(() => {
-      showNuevaObra();
-      setTimeout(() => {
-        const sel = document.getElementById('nQuoteSelect');
-        if (sel) {
-          sel.value = quoteId;
-          onQuoteSelect(quoteId);
-        }
-      }, 500);
-    }, 300);
   }
 }
 
