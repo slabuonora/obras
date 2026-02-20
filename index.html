@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Obras — La Buonora</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+    :root {
+      --bg: #f7f8fa; --surface: #fff; --border: #e2e5ea;
+      --text: #1a1d23; --text-2: #5a5f6b; --text-3: #8b909c;
+      --accent: #2e5faa; --accent-hover: #24508f; --accent-light: #eaf0fb;
+      --danger: #c93c3c; --success: #2a8a4a; --warn: #c78b17; --radius: 8px;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    html.dark {
+      --bg: #1a1d23; --surface: #23272e; --border: #353a44;
+      --text: #e8eaed; --text-2: #b0b5bf; --text-3: #6b7280;
+      --accent: #5b8fd9; --accent-hover: #7ba7e5; --accent-light: #2a3444;
+      --danger: #e05555; --success: #3bb06a; --warn: #d9a030;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
+
+    /* ── Header ── */
+    .app-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 28px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 50; }
+    .app-header h1 { font-size: 18px; font-weight: 700; color: var(--accent); }
+    .app-header .subtitle { color: var(--text-3); font-size: 13px; }
+    .header-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .nav-tabs { display: flex; gap: 2px; background: var(--bg); border-radius: 8px; padding: 3px; margin-left: 12px; }
+    .nav-tab { padding: 6px 14px; font-size: 12.5px; font-weight: 500; font-family: inherit; border: none; background: transparent; color: var(--text-3); cursor: pointer; border-radius: 6px; transition: all 0.15s; white-space: nowrap; }
+    .nav-tab:hover { color: var(--text); background: var(--surface); }
+    .nav-tab.active { background: var(--accent); color: white; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+
+    /* ── Shared UI ── */
+    .container { max-width: 1500px; margin: 0 auto; padding: 24px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; font-size: 13px; font-weight: 500; font-family: inherit; border-radius: 6px; border: 1px solid transparent; cursor: pointer; transition: all 0.15s; }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .btn-secondary:hover { background: var(--bg); }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-success { background: var(--success); color: white; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+    .dark-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 14px; color: var(--text); }
+    label { font-size: 12px; font-weight: 500; color: var(--text-2); display: block; margin-bottom: 4px; }
+    input, select, textarea { width: 100%; padding: 8px 10px; font-size: 13px; font-family: inherit; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); transition: border-color 0.15s; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 60px; }
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .form-group { display: flex; flex-direction: column; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .mono { font-family: var(--mono); }
+    .empty { text-align: center; padding: 40px 20px; color: var(--text-3); }
+
+    /* ── Toast ── */
+    .toast-container { position: fixed; top: 70px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
+    .toast { padding: 10px 16px; border-radius: 8px; font-size: 13px; color: white; box-shadow: 0 4px 16px rgba(0,0,0,0.15); animation: slideIn 0.25s ease; }
+    .toast-success { background: var(--success); } .toast-error { background: var(--danger); } .toast-info { background: var(--accent); }
+    @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* ── Loading ── */
+    .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.7); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
+    html.dark .loading-overlay { background: rgba(0,0,0,0.6); }
+    .loading-overlay.active { display: flex; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; }
+    .spinner-lg { width: 32px; height: 32px; border-width: 3px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Metrics bar ── */
+    .metrics-bar { display: flex; gap: 12px; padding: 0 0 20px 0; flex-wrap: wrap; }
+    .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 20px; text-align: center; min-width: 120px; flex: 1; }
+    .metric-value { display: block; font-size: 28px; font-weight: 700; font-family: var(--mono); color: var(--text); }
+    .metric-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .metric-card.accent .metric-value { color: var(--accent); }
+    .metric-card.success .metric-value { color: var(--success); }
+    .metric-card.warn .metric-value { color: var(--warn); }
+    .metric-card.danger .metric-value { color: var(--danger); }
+
+    /* ── Kanban ── */
+    .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; min-height: 60vh; }
+    .kanban-col { background: var(--bg); border-radius: var(--radius); padding: 12px; min-height: 200px; border: 2px solid transparent; transition: border-color 0.15s; }
+    .kanban-col.dragover { border-color: var(--accent); background: var(--accent-light); }
+    .kanban-col-header { font-size: 13px; font-weight: 600; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .kanban-col-header .col-count { font-size: 11px; font-weight: 700; font-family: var(--mono); padding: 2px 8px; border-radius: 10px; background: rgba(0,0,0,0.08); }
+    html.dark .kanban-col-header .col-count { background: rgba(255,255,255,0.1); }
+    .col-por_preparar .kanban-col-header { background: #fef3d1; color: #92690a; }
+    .col-en_curso .kanban-col-header { background: var(--accent-light); color: var(--accent); }
+    .col-terminada .kanban-col-header { background: #e3f5ea; color: var(--success); }
+    .col-entregada .kanban-col-header { background: #eee; color: #666; }
+    html.dark .col-por_preparar .kanban-col-header { background: #433814; color: #f5cb5c; }
+    html.dark .col-en_curso .kanban-col-header { background: #1e3050; color: #7ba7e5; }
+    html.dark .col-terminada .kanban-col-header { background: #1a3328; color: #3bb06a; }
+    html.dark .col-entregada .kanban-col-header { background: #2a2d33; color: #8b909c; }
+
+    /* ── Obra card ── */
+    .obra-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; cursor: grab; transition: transform 0.15s, box-shadow 0.15s; }
+    .obra-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .obra-card.dragging { opacity: 0.4; transform: rotate(2deg); }
+    .obra-card .obra-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .obra-card .obra-name { font-weight: 600; font-size: 14px; line-height: 1.3; }
+    .obra-card .obra-numero { font-size: 11px; color: var(--text-3); font-family: var(--mono); }
+    .obra-card .obra-client { font-size: 12px; color: var(--text-2); margin-bottom: 2px; }
+    .obra-card .obra-address { font-size: 11px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
+    .obra-card .obra-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+    .obra-card .obra-meta { display: flex; gap: 8px; align-items: center; font-size: 11px; color: var(--text-3); }
+
+    /* ── Progress bar ── */
+    .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+    .progress-label { font-size: 11px; color: var(--text-3); margin-top: 3px; display: flex; justify-content: space-between; }
+
+    /* ── Equipo avatars ── */
+    .equipo-avatars { display: flex; margin-top: 8px; }
+    .equipo-avatar { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; border: 2px solid var(--surface); margin-left: -6px; cursor: default; }
+    .equipo-avatar:first-child { margin-left: 0; }
+
+    /* ── Prioridad badge ── */
+    .prioridad-badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 600; letter-spacing: 0.3px; }
+    .prioridad-alta { background: #fef3d1; color: #856404; }
+    .prioridad-urgente { background: #f8d7da; color: #721c24; }
+    html.dark .prioridad-alta { background: #433814; color: #f5cb5c; }
+    html.dark .prioridad-urgente { background: #3d1c1c; color: #f87171; }
+
+    /* ── Checklist mini ── */
+    .checklist-mini { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 4px; }
+    .checklist-mini .check-icon { color: var(--success); }
+
+    /* ── Modal ── */
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; align-items: center; justify-content: center; }
+    .modal-backdrop.active { display: flex; }
+    .modal { background: var(--surface); border-radius: 12px; padding: 24px; max-width: 640px; width: 95%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal h3 { font-size: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .modal-close { margin-left: auto; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-3); padding: 4px 8px; border-radius: 4px; }
+    .modal-close:hover { background: var(--bg); color: var(--text); }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+    /* ── Lista tab ── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); padding: 10px 12px; border-bottom: 2px solid var(--border); cursor: pointer; user-select: none; }
+    th:hover { color: var(--text); }
+    td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:hover td { background: var(--accent-light); }
+    .status { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+    .status-por_preparar { background: #fef3d1; color: var(--warn); }
+    .status-en_curso { background: var(--accent-light); color: var(--accent); }
+    .status-terminada { background: #e3f5ea; color: var(--success); }
+    .status-entregada { background: #eee; color: #888; }
+    .status-garantia { background: #fde2e2; color: var(--danger); }
+    .status-cancelada { background: #e8e8e8; color: #888; text-decoration: line-through; }
+    html.dark .status-por_preparar { background: #433814; }
+    html.dark .status-entregada { background: #2a2d33; }
+    html.dark .status-cancelada { background: #2a2d33; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1100px) {
+      .kanban { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .kanban { grid-template-columns: 1fr; }
+      .kanban-col { min-height: auto; }
+      .metrics-bar { gap: 8px; }
+      .metric-card { min-width: 80px; padding: 10px 12px; }
+      .metric-value { font-size: 22px; }
+      .app-header { padding: 10px 16px; flex-wrap: wrap; }
+      .nav-tabs { order: 3; width: 100%; justify-content: center; margin-left: 0; margin-top: 8px; }
+      .container { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="app-header">
+  <h1>🏗️ Obras</h1>
+  <span class="subtitle">Instalaciones & seguimiento</span>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('kanban')" id="tab-kanban">Kanban</button>
+    <button class="nav-tab" onclick="switchTab('lista')" id="tab-lista">Lista</button>
+    <button class="nav-tab" onclick="switchTab('metricas')" id="tab-metricas">Métricas</button>
+  </nav>
+  <div class="header-actions">
+    <a href="comercial.html" class="btn btn-secondary btn-sm" style="text-decoration:none">← Comercial</a>
+    <a href="produccion.html" class="btn btn-secondary btn-sm" style="text-decoration:none">Producción →</a>
+    <button class="btn btn-primary btn-sm" onclick="showNuevaObra()">+ Nueva obra</button>
+    <button class="dark-toggle" onclick="toggleDark()" title="Modo oscuro/claro">◐</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══ METRICS BAR ═══ -->
+  <div class="metrics-bar">
+    <div class="metric-card accent"><span class="metric-value" id="mActivas">-</span><span class="metric-label">En curso</span></div>
+    <div class="metric-card warn"><span class="metric-value" id="mPorPreparar">-</span><span class="metric-label">Por preparar</span></div>
+    <div class="metric-card success"><span class="metric-value" id="mTerminadas">-</span><span class="metric-label">Terminadas</span></div>
+    <div class="metric-card"><span class="metric-value" id="mEntregas">-</span><span class="metric-label">Entregas 30d</span></div>
+    <div class="metric-card danger"><span class="metric-value" id="mGarantia">-</span><span class="metric-label">Garantía</span></div>
+    <div class="metric-card"><span class="metric-value" id="mAvgDias">-</span><span class="metric-label">Avg días inst.</span></div>
+  </div>
+
+  <!-- ═══ TAB: KANBAN ═══ -->
+  <div class="tab-panel active" id="panel-kanban">
+    <div class="kanban" id="kanbanBoard">
+      <div class="kanban-col col-por_preparar" data-estado="por_preparar"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <div class="kanban-col-header">Por preparar <span class="col-count" id="cnt-por_preparar">0</span></div>
+        <div class="kanban-cards" id="cards-por_preparar"></div>
+      </div>
+      <div class="kanban-col col-en_curso" data-estado="en_curso"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <div class="kanban-col-header">En curso <span class="col-count" id="cnt-en_curso">0</span></div>
+        <div class="kanban-cards" id="cards-en_curso"></div>
+      </div>
+      <div class="kanban-col col-terminada" data-estado="terminada"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <div class="kanban-col-header">Terminada <span class="col-count" id="cnt-terminada">0</span></div>
+        <div class="kanban-cards" id="cards-terminada"></div>
+      </div>
+      <div class="kanban-col col-entregada" data-estado="entregada"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <div class="kanban-col-header">Entregada <span class="col-count" id="cnt-entregada">0</span></div>
+        <div class="kanban-cards" id="cards-entregada"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: LISTA ═══ -->
+  <div class="tab-panel" id="panel-lista">
+    <div style="overflow-x:auto">
+      <table id="obrasTable">
+        <thead>
+          <tr>
+            <th onclick="sortList('numero')">#</th>
+            <th onclick="sortList('nombre')">Obra</th>
+            <th onclick="sortList('cliente_nombre')">Cliente</th>
+            <th onclick="sortList('estado')">Estado</th>
+            <th onclick="sortList('prioridad')">Prior.</th>
+            <th onclick="sortList('pct_produccion')">Producción</th>
+            <th>Checklist</th>
+            <th onclick="sortList('fecha_inicio_estimada')">Inicio est.</th>
+            <th onclick="sortList('horas_reales')">Horas</th>
+          </tr>
+        </thead>
+        <tbody id="obrasTableBody"></tbody>
+      </table>
+      <div class="empty" id="listaEmpty" style="display:none">No hay obras registradas</div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: MÉTRICAS ═══ -->
+  <div class="tab-panel" id="panel-metricas">
+    <div class="empty">📊 Métricas de colocadores — se habilitará con datos reales</div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ═══ MODAL: NUEVA OBRA ═══ -->
+<div class="modal-backdrop" id="modalNuevaObra">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3>🏗️ Nueva Obra <button class="modal-close" onclick="closeModal('modalNuevaObra')">&times;</button></h3>
+
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Crear desde quote aprobada</label>
+      <select id="nQuoteSelect" onchange="onQuoteSelect(this.value)">
+        <option value="">— Manual (sin quote) —</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label>Nombre de obra *</label><input id="nNombre" placeholder="Ej: CALA U1006" /></div>
+      <div class="form-group"><label>Prioridad</label>
+        <select id="nPrioridad"><option value="baja">Baja</option><option value="normal" selected>Normal</option><option value="alta">Alta</option><option value="urgente">Urgente</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Cliente</label><input id="nCliente" placeholder="Nombre del cliente" /></div>
+      <div class="form-group"><label>Ciudad</label><input id="nCiudad" /></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px"><label>Dirección</label><input id="nDireccion" placeholder="Dirección de la obra" /></div>
+    <div class="form-row">
+      <div class="form-group"><label>Contacto en obra</label><input id="nContacto" /></div>
+      <div class="form-group"><label>Teléfono contacto</label><input id="nTelefono" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Fecha inicio estimada</label><input type="date" id="nFechaInicio" /></div>
+      <div class="form-group"><label>Fecha fin estimada</label><input type="date" id="nFechaFin" /></div>
+      <div class="form-group"><label>Horas estimadas</label><input type="number" id="nHoras" step="0.5" min="0" /></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px"><label>Notas</label><textarea id="nNotas" rows="2"></textarea></div>
+
+    <!-- Hidden fields from quote -->
+    <input type="hidden" id="nQuoteId" />
+    <input type="hidden" id="nSolicitudId" />
+    <input type="hidden" id="nClientId" />
+    <input type="hidden" id="nMontoQuote" />
+    <input type="hidden" id="nMoneda" />
+
+    <div id="nQuoteInfo" style="display:none; margin-bottom:14px; padding:10px 14px; background:var(--accent-light); border-radius:6px; font-size:12px; color:var(--accent)"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modalNuevaObra')">Cancelar</button>
+      <button class="btn btn-primary" onclick="crearObra()" id="btnCrearObra">Crear obra</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: DETALLE OBRA (placeholder para fase 2) ═══ -->
+<div class="modal-backdrop" id="modalDetalle">
+  <div class="modal" style="max-width:900px" onclick="event.stopPropagation()">
+    <h3 id="detalleTitle">Detalle de obra <button class="modal-close" onclick="closeModal('modalDetalle')">&times;</button></h3>
+    <div id="detalleContent"><div class="empty">Detalle de obra — se implementa en fase 2</div></div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner spinner-lg"></div>
+  <span style="font-size:13px; color:var(--text-2)">Cargando...</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════════
+const SUPABASE_URL = "https://qnjizqowddtvzzfillmo.supabase.co";
+const SUPABASE_ANON = "sb_publishable_Agu_I1nw4mY1qRARQBbaHQ_6lTWsFTh";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── REST helpers ──
+async function sbQuery(table, params="") {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+    headers: { "apikey":SUPABASE_ANON, "Authorization":`Bearer ${SUPABASE_ANON}`, "Accept":"application/json" }
+  });
+  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+  return r.json();
+}
+
+async function sbMutate(table, method, body, params="") {
+  const headers = {
+    "apikey": SUPABASE_ANON,
+    "Authorization": `Bearer ${SUPABASE_ANON}`,
+    "Content-Type": "application/json",
+    "Prefer": method === "POST" ? "return=representation" : "return=minimal"
+  };
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+    method, headers, body: JSON.stringify(body)
+  });
+  if (!r.ok) { const err = await r.text(); throw new Error(err); }
+  return method === "POST" ? r.json() : true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let obrasData = [];
+let sortField = 'numero';
+let sortDir = 'desc';
+let quotesForSelect = [];
+
+// ═══════════════════════════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════════════════════════
+function toggleDark() {
+  document.documentElement.classList.toggle('dark');
+  localStorage.setItem('dark', document.documentElement.classList.contains('dark'));
+}
+if (localStorage.getItem('dark') === 'true') document.documentElement.classList.add('dark');
+
+// ═══════════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`panel-${tab}`).classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════
+function toast(msg, type='info') {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════════
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+
+// ═══════════════════════════════════════════════════════════════
+// LOADING
+// ═══════════════════════════════════════════════════════════════
+function showLoading() { document.getElementById('loadingOverlay').classList.add('active'); }
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
+
+// ═══════════════════════════════════════════════════════════════
+// METRICS
+// ═══════════════════════════════════════════════════════════════
+async function loadMetrics() {
+  try {
+    const [m] = await sbQuery('v_obra_metricas_globales', 'select=*');
+    if (!m) return;
+    document.getElementById('mActivas').textContent = m.obras_activas || 0;
+    document.getElementById('mPorPreparar').textContent = m.obras_por_preparar || 0;
+    document.getElementById('mTerminadas').textContent = m.obras_terminadas || 0;
+    document.getElementById('mEntregas').textContent = m.entregas_30d || 0;
+    document.getElementById('mGarantia').textContent = m.obras_garantia || 0;
+    const avg = m.avg_dias_instalacion_90d;
+    document.getElementById('mAvgDias').textContent = avg ? Math.round(avg) + 'd' : '—';
+  } catch (e) { console.error('Metrics error:', e); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// KANBAN
+// ═══════════════════════════════════════════════════════════════
+const KANBAN_COLS = ['por_preparar','en_curso','terminada','entregada'];
+const ESTADO_LABELS = {
+  por_preparar: 'Por preparar', en_curso: 'En curso',
+  terminada: 'Terminada', entregada: 'Entregada',
+  garantia: 'Garantía', cancelada: 'Cancelada'
+};
+
+async function loadKanban() {
+  try {
+    obrasData = await sbQuery('v_obra_kanban', 'select=*&order=prioridad.desc,updated_at.desc');
+
+    KANBAN_COLS.forEach(estado => {
+      const container = document.getElementById(`cards-${estado}`);
+      const items = obrasData.filter(o => o.estado === estado);
+      document.getElementById(`cnt-${estado}`).textContent = items.length;
+      container.innerHTML = items.map(o => renderCard(o)).join('');
+    });
+  } catch (e) {
+    console.error('Kanban error:', e);
+    toast('Error cargando obras', 'error');
+  }
+}
+
+function renderCard(o) {
+  const pctColor = o.produccion_completa ? 'var(--success)' : o.pct_produccion > 50 ? 'var(--accent)' : 'var(--warn)';
+  const equipo = typeof o.equipo === 'string' ? JSON.parse(o.equipo) : (o.equipo || []);
+
+  let prioridadHtml = '';
+  if (o.prioridad === 'alta') prioridadHtml = '<span class="prioridad-badge prioridad-alta">ALTA</span>';
+  if (o.prioridad === 'urgente') prioridadHtml = '<span class="prioridad-badge prioridad-urgente">URGENTE</span>';
+
+  const checkPct = o.checklist_total > 0 ? Math.round(o.checklist_completados / o.checklist_total * 100) : 0;
+
+  return `<div class="obra-card" draggable="true"
+    ondragstart="onDragStart(event, '${o.id}')"
+    ondragend="onDragEnd(event)"
+    onclick="openDetalle('${o.id}')">
+    <div class="obra-header">
+      <div>
+        <div class="obra-name">${esc(o.nombre)}</div>
+        <div class="obra-numero">#OBR-${o.numero}</div>
+      </div>
+      ${prioridadHtml}
+    </div>
+    <div class="obra-client">${esc(o.cliente_nombre || '—')}</div>
+    <div class="obra-address">${esc(o.direccion || '')}</div>
+    ${o.total_servicios > 0 ? `
+      <div class="progress-bar"><div class="progress-bar-fill" style="width:${o.pct_produccion}%;background:${pctColor}"></div></div>
+      <div class="progress-label"><span>Producción ${o.pct_produccion}%${o.produccion_completa ? ' ✓' : ''}</span><span>${o.servicios_completados}/${o.total_servicios}</span></div>
+    ` : ''}
+    ${o.checklist_total > 0 ? `
+      <div class="checklist-mini"><span class="check-icon">☑</span> ${o.checklist_completados}/${o.checklist_total} items (${checkPct}%)</div>
+    ` : ''}
+    <div class="obra-footer">
+      <div class="equipo-avatars">
+        ${equipo.map(c => `<div class="equipo-avatar" style="background:${c.color || '#888'}" title="${esc(c.nombre)}">${(c.nombre||'?')[0]}</div>`).join('')}
+      </div>
+      <div class="obra-meta">
+        ${o.dias_en_obra > 0 ? `<span>${o.dias_en_obra}d</span>` : ''}
+        ${o.horas_reales > 0 ? `<span>${o.horas_reales}h</span>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ── Drag & Drop ──
+let dragObraId = null;
+
+function onDragStart(e, id) {
+  dragObraId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  e.target.classList.add('dragging');
+}
+
+function onDragEnd(e) {
+  e.target.classList.remove('dragging');
+  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('dragover'));
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('dragover');
+}
+
+function onDragLeave(e) {
+  e.currentTarget.classList.remove('dragover');
+}
+
+async function onDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  if (!dragObraId) return;
+
+  const nuevoEstado = e.currentTarget.dataset.estado;
+  const obra = obrasData.find(o => o.id === dragObraId);
+  if (!obra || obra.estado === nuevoEstado) return;
+
+  const anterior = obra.estado;
+
+  try {
+    // Update estado
+    const updateData = { estado: nuevoEstado };
+    if (nuevoEstado === 'en_curso' && !obra.fecha_inicio_real) {
+      updateData.fecha_inicio_real = new Date().toISOString().split('T')[0];
+    }
+    if (nuevoEstado === 'terminada') {
+      updateData.fecha_fin_real = new Date().toISOString().split('T')[0];
+    }
+    if (nuevoEstado === 'entregada') {
+      updateData.fecha_entrega = new Date().toISOString().split('T')[0];
+    }
+
+    await sbMutate('obras', 'PATCH', updateData, `id=eq.${dragObraId}`);
+
+    // Insert estado_cambio event
+    await sbMutate('obra_eventos', 'POST', [{
+      obra_id: dragObraId,
+      tipo: 'estado_cambio',
+      descripcion: `${ESTADO_LABELS[anterior]} → ${ESTADO_LABELS[nuevoEstado]}`,
+      metadata: { anterior, nuevo: nuevoEstado }
+    }]);
+
+    toast(`Obra movida a ${ESTADO_LABELS[nuevoEstado]}`, 'success');
+    await loadKanban();
+    await loadMetrics();
+  } catch (err) {
+    console.error('Drop error:', err);
+    toast('Error al mover obra', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LISTA
+// ═══════════════════════════════════════════════════════════════
+function renderLista() {
+  const tbody = document.getElementById('obrasTableBody');
+  const sorted = [...obrasData].sort((a, b) => {
+    let va = a[sortField], vb = b[sortField];
+    if (va == null) va = '';
+    if (vb == null) vb = '';
+    if (typeof va === 'string') va = va.toLowerCase();
+    if (typeof vb === 'string') vb = vb.toLowerCase();
+    if (va < vb) return sortDir === 'asc' ? -1 : 1;
+    if (va > vb) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  if (sorted.length === 0) {
+    tbody.innerHTML = '';
+    document.getElementById('listaEmpty').style.display = '';
+    return;
+  }
+  document.getElementById('listaEmpty').style.display = 'none';
+
+  tbody.innerHTML = sorted.map(o => {
+    const checkPct = o.checklist_total > 0 ? Math.round(o.checklist_completados / o.checklist_total * 100) : 0;
+    return `<tr onclick="openDetalle('${o.id}')" style="cursor:pointer">
+      <td class="mono" style="font-size:12px">${o.numero}</td>
+      <td><strong>${esc(o.nombre)}</strong></td>
+      <td>${esc(o.cliente_nombre || '—')}</td>
+      <td><span class="status status-${o.estado}">${ESTADO_LABELS[o.estado] || o.estado}</span></td>
+      <td>${o.prioridad === 'alta' ? '<span class="prioridad-badge prioridad-alta">ALTA</span>' :
+            o.prioridad === 'urgente' ? '<span class="prioridad-badge prioridad-urgente">URGENTE</span>' :
+            o.prioridad}</td>
+      <td>
+        <div class="progress-bar" style="width:80px;display:inline-block;vertical-align:middle">
+          <div class="progress-bar-fill" style="width:${o.pct_produccion}%;background:${o.produccion_completa ? 'var(--success)' : 'var(--accent)'}"></div>
+        </div>
+        <span class="mono" style="font-size:11px;margin-left:4px">${o.pct_produccion}%</span>
+      </td>
+      <td><span class="mono" style="font-size:11px">${o.checklist_completados}/${o.checklist_total} (${checkPct}%)</span></td>
+      <td style="font-size:12px">${o.fecha_inicio_estimada || '—'}</td>
+      <td class="mono" style="font-size:12px">${o.horas_reales > 0 ? o.horas_reales + 'h' : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function sortList(field) {
+  if (sortField === field) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; }
+  else { sortField = field; sortDir = 'asc'; }
+  renderLista();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DETALLE (placeholder — fase 2)
+// ═══════════════════════════════════════════════════════════════
+function openDetalle(id) {
+  const obra = obrasData.find(o => o.id === id);
+  if (!obra) return;
+  document.getElementById('detalleTitle').innerHTML = `🏗️ ${esc(obra.nombre)} <span class="mono" style="font-size:12px;color:var(--text-3)">#OBR-${obra.numero}</span><button class="modal-close" onclick="closeModal('modalDetalle')">&times;</button>`;
+  document.getElementById('detalleContent').innerHTML = `<div class="empty">Detalle completo — fase 2<br><br>
+    <strong>Estado:</strong> ${ESTADO_LABELS[obra.estado]}<br>
+    <strong>Cliente:</strong> ${esc(obra.cliente_nombre || '—')}<br>
+    <strong>Producción:</strong> ${obra.pct_produccion}%<br>
+    <strong>Horas reales:</strong> ${obra.horas_reales || 0}h
+  </div>`;
+  openModal('modalDetalle');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NUEVA OBRA
+// ═══════════════════════════════════════════════════════════════
+async function showNuevaObra() {
+  // Reset form
+  ['nNombre','nCliente','nCiudad','nDireccion','nContacto','nTelefono','nFechaInicio','nFechaFin','nHoras','nNotas'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nPrioridad').value = 'normal';
+  document.getElementById('nQuoteSelect').value = '';
+  document.getElementById('nQuoteId').value = '';
+  document.getElementById('nSolicitudId').value = '';
+  document.getElementById('nClientId').value = '';
+  document.getElementById('nMontoQuote').value = '';
+  document.getElementById('nMoneda').value = '';
+  document.getElementById('nQuoteInfo').style.display = 'none';
+
+  // Load approved quotes without obra
+  try {
+    const quotes = await sbQuery('quotes', 'status=eq.approved&select=id,obra,cliente,client_id,total_final,currency,solicitud_id,referencia&order=updated_at.desc');
+    const existing = await sbQuery('obras', 'select=quote_id');
+    const usedIds = new Set(existing.map(o => o.quote_id).filter(Boolean));
+    quotesForSelect = quotes.filter(q => !usedIds.has(q.id));
+
+    const sel = document.getElementById('nQuoteSelect');
+    sel.innerHTML = '<option value="">— Manual (sin quote) —</option>' +
+      quotesForSelect.map(q => `<option value="${q.id}">${esc(q.obra || q.referencia || 'Sin nombre')} — ${esc(q.cliente || '?')} (${q.currency} ${(q.total_final||0).toLocaleString()})</option>`).join('');
+  } catch (e) {
+    console.error('Load quotes error:', e);
+  }
+
+  openModal('modalNuevaObra');
+}
+
+function onQuoteSelect(quoteId) {
+  if (!quoteId) {
+    document.getElementById('nQuoteId').value = '';
+    document.getElementById('nQuoteInfo').style.display = 'none';
+    return;
+  }
+  const q = quotesForSelect.find(x => x.id === quoteId);
+  if (!q) return;
+
+  document.getElementById('nQuoteId').value = q.id;
+  document.getElementById('nSolicitudId').value = q.solicitud_id || '';
+  document.getElementById('nClientId').value = q.client_id || '';
+  document.getElementById('nMontoQuote').value = q.total_final || '';
+  document.getElementById('nMoneda').value = q.currency || 'USD';
+
+  document.getElementById('nNombre').value = q.obra || '';
+  document.getElementById('nCliente').value = q.cliente || '';
+  document.getElementById('nQuoteInfo').style.display = '';
+  document.getElementById('nQuoteInfo').innerHTML = `<strong>Quote vinculada:</strong> ${esc(q.referencia || q.id.slice(0,8))} — ${q.currency} ${(q.total_final||0).toLocaleString()}<br>Se crearán automáticamente los servicios y checklists.`;
+}
+
+async function crearObra() {
+  const nombre = document.getElementById('nNombre').value.trim();
+  if (!nombre) { toast('Nombre de obra es obligatorio', 'error'); return; }
+
+  const btn = document.getElementById('btnCrearObra');
+  btn.disabled = true;
+  btn.textContent = 'Creando...';
+
+  try {
+    const obraData = {
+      nombre,
+      cliente_nombre: document.getElementById('nCliente').value.trim() || null,
+      direccion: document.getElementById('nDireccion').value.trim() || null,
+      ciudad: document.getElementById('nCiudad').value.trim() || null,
+      contacto_obra: document.getElementById('nContacto').value.trim() || null,
+      contacto_telefono: document.getElementById('nTelefono').value.trim() || null,
+      fecha_inicio_estimada: document.getElementById('nFechaInicio').value || null,
+      fecha_fin_estimada: document.getElementById('nFechaFin').value || null,
+      horas_estimadas: document.getElementById('nHoras').value ? parseFloat(document.getElementById('nHoras').value) : null,
+      prioridad: document.getElementById('nPrioridad').value,
+      notas: document.getElementById('nNotas').value.trim() || null
+    };
+
+    const quoteId = document.getElementById('nQuoteId').value;
+    if (quoteId) {
+      obraData.quote_id = quoteId;
+      obraData.solicitud_id = document.getElementById('nSolicitudId').value || null;
+      obraData.client_id = document.getElementById('nClientId').value || null;
+      obraData.monto_quote = document.getElementById('nMontoQuote').value ? parseFloat(document.getElementById('nMontoQuote').value) : null;
+      obraData.moneda = document.getElementById('nMoneda').value || 'USD';
+
+      // Fetch client address if available
+      if (obraData.client_id && !obraData.direccion) {
+        try {
+          const [client] = await sbQuery('clients', `id=eq.${obraData.client_id}&select=address,city`);
+          if (client) {
+            obraData.direccion = obraData.direccion || client.address || null;
+            obraData.ciudad = obraData.ciudad || client.city || null;
+          }
+        } catch (_) {}
+      }
+    }
+
+    // Create obra
+    const [obra] = await sbMutate('obras', 'POST', obraData);
+
+    // If from quote → create servicios + checklists
+    if (quoteId) {
+      try {
+        const quoteItems = await sbQuery('quote_items', `quote_id=eq.${quoteId}&select=id,service_id,ambiente,tipo,descripcion`);
+
+        // Create obra_servicios
+        const servicios = quoteItems.filter(i => i.service_id).map(i => ({
+          obra_id: obra.id,
+          service_id: i.service_id
+        }));
+        if (servicios.length > 0) {
+          await sbMutate('obra_servicios', 'POST', servicios);
+        }
+
+        // Create checklists from ambientes
+        const ambientes = [...new Set(quoteItems.map(i => i.ambiente).filter(Boolean))];
+        for (let idx = 0; idx < ambientes.length; idx++) {
+          const amb = ambientes[idx];
+          // Find matching template
+          let templateItems = [];
+          try {
+            const [tmpl] = await sbQuery('checklist_templates', `tipo_ambiente=eq.${encodeURIComponent(amb)}&select=items`);
+            if (tmpl && tmpl.items) {
+              templateItems = typeof tmpl.items === 'string' ? JSON.parse(tmpl.items) : tmpl.items;
+            }
+          } catch (_) {}
+
+          const [checklist] = await sbMutate('obra_checklist', 'POST', [{
+            obra_id: obra.id, ambiente: amb, orden: idx
+          }]);
+
+          if (templateItems.length > 0) {
+            const items = templateItems.map((label, i) => ({
+              checklist_id: checklist.id, label, orden: i
+            }));
+            await sbMutate('obra_checklist_items', 'POST', items);
+          }
+        }
+      } catch (e) {
+        console.error('Error creating servicios/checklists:', e);
+        toast('Obra creada, pero error en servicios/checklists', 'error');
+      }
+    }
+
+    toast(`Obra #OBR-${obra.numero} creada`, 'success');
+    closeModal('modalNuevaObra');
+    await loadKanban();
+    await loadMetrics();
+    renderLista();
+
+  } catch (err) {
+    console.error('Crear obra error:', err);
+    toast('Error al crear obra: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Crear obra';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// REALTIME
+// ═══════════════════════════════════════════════════════════════
+function subscribeRealtime() {
+  supabaseClient
+    .channel('obras-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'obras' }, () => {
+      loadKanban().then(() => renderLista());
+      loadMetrics();
+    })
+    .subscribe();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+async function init() {
+  showLoading();
+  try {
+    await Promise.all([loadMetrics(), loadKanban()]);
+    renderLista();
+    subscribeRealtime();
+  } catch (e) {
+    console.error('Init error:', e);
+    toast('Error al cargar datos', 'error');
+  } finally {
+    hideLoading();
+  }
+}
+
+init();
+</script>
+</body>
+</html>
