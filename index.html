@@ -1580,11 +1580,35 @@ async function init() {
     renderLista();
     subscribeRealtime();
     await initMobile();
+    checkUrlParams();
   } catch (e) {
     console.error('Init error:', e);
     toast('Error al cargar datos', 'error');
   } finally {
     hideLoading();
+  }
+}
+
+// Detectar si venimos desde comercial.html con una quote para crear obra
+function checkUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const action = params.get('action');
+  const quoteId = params.get('quote_id');
+
+  if (action === 'crear_desde_quote' && quoteId) {
+    // Limpiar URL sin recargar
+    window.history.replaceState({}, '', window.location.pathname);
+    // Abrir modal nueva obra con quote pre-seleccionada
+    setTimeout(() => {
+      showNuevaObra();
+      setTimeout(() => {
+        const sel = document.getElementById('nQuoteSelect');
+        if (sel) {
+          sel.value = quoteId;
+          onQuoteSelect(quoteId);
+        }
+      }, 500);
+    }, 300);
   }
 }
 
