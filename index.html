@@ -155,6 +155,103 @@
     html.dark .status-entregada { background: #2a2d33; }
     html.dark .status-cancelada { background: #2a2d33; }
 
+    /* ── Detail panel (slide-in from right) ── */
+    .detail-overlay { position: fixed; inset: 0; z-index: 60; display: none; }
+    .detail-overlay.active { display: flex; }
+    .detail-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
+    .detail-panel { position: absolute; right: 0; top: 0; bottom: 0; width: 720px; max-width: 100vw; background: var(--surface); overflow-y: auto; box-shadow: -4px 0 24px rgba(0,0,0,0.15); animation: slidePanel 0.2s ease; }
+    @keyframes slidePanel { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .detail-header { padding: 20px 24px 0; display: flex; align-items: flex-start; gap: 12px; }
+    .detail-header h2 { font-size: 18px; font-weight: 700; flex: 1; line-height: 1.3; }
+    .detail-header .obra-numero-lg { font-size: 12px; font-family: var(--mono); color: var(--text-3); }
+    .detail-header .detail-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-3); padding: 4px 8px; border-radius: 4px; flex-shrink: 0; }
+    .detail-header .detail-close:hover { background: var(--bg); color: var(--text); }
+    .detail-info { padding: 12px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; }
+    .detail-info .di-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; }
+    .detail-info .di-value { color: var(--text); }
+
+    /* ── Sub-tabs inside detail ── */
+    .detail-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 24px; margin-top: 12px; }
+    .detail-tab { padding: 10px 16px; font-size: 12.5px; font-weight: 500; font-family: inherit; border: none; background: transparent; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+    .detail-tab:hover { color: var(--text); }
+    .detail-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+    .detail-tab-panel { display: none; padding: 16px 24px; }
+    .detail-tab-panel.active { display: block; }
+
+    /* ── Timeline ── */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .timeline-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .timeline-item:last-child { border-bottom: none; }
+    .timeline-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .timeline-icon.check_in { background: #dbeafe; color: #2563eb; }
+    .timeline-icon.check_out { background: #fef3c7; color: #d97706; }
+    .timeline-icon.foto { background: #ede9fe; color: #7c3aed; }
+    .timeline-icon.nota { background: #e5e7eb; color: #6b7280; }
+    .timeline-icon.incidencia { background: #fee2e2; color: #dc2626; }
+    .timeline-icon.adicional { background: #fef3c7; color: #92400e; }
+    .timeline-icon.estado_cambio { background: #dbeafe; color: #1d4ed8; }
+    .timeline-icon.entrega { background: #d1fae5; color: #059669; }
+    .timeline-icon.firma { background: #d1fae5; color: #047857; }
+    html.dark .timeline-icon.check_in { background: #1e3050; } html.dark .timeline-icon.check_out { background: #433814; }
+    html.dark .timeline-icon.foto { background: #2e1f5e; } html.dark .timeline-icon.nota { background: #2a2d33; }
+    html.dark .timeline-icon.incidencia { background: #3d1c1c; } html.dark .timeline-icon.estado_cambio { background: #1e3050; }
+    html.dark .timeline-icon.entrega { background: #1a3328; } html.dark .timeline-icon.firma { background: #1a3328; }
+    .timeline-body { flex: 1; min-width: 0; }
+    .timeline-meta { font-size: 11px; color: var(--text-3); display: flex; gap: 8px; flex-wrap: wrap; }
+    .timeline-desc { font-size: 13px; color: var(--text); margin-top: 2px; }
+    .timeline-photos { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+    .timeline-photo { width: 64px; height: 64px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; }
+    .timeline-photo:hover { opacity: 0.8; }
+    .timeline-actions { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+
+    /* ── Checklist ── */
+    .checklist-section { margin-bottom: 16px; }
+    .checklist-ambiente { font-size: 14px; font-weight: 600; padding: 8px 0; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .checklist-ambiente:hover { color: var(--accent); }
+    .checklist-ambiente .amb-progress { font-size: 11px; font-weight: 500; color: var(--text-3); font-family: var(--mono); }
+    .checklist-items { padding-left: 4px; }
+    .checklist-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--border); }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-item input[type="checkbox"] { margin-top: 3px; width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; accent-color: var(--accent); }
+    .checklist-item.checked .ck-label { text-decoration: line-through; color: var(--text-3); }
+    .checklist-item .ck-label { flex: 1; }
+    .checklist-item .ck-meta { font-size: 10px; color: var(--text-3); }
+    .checklist-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+    .checklist-bar-fill { height: 100%; background: var(--success); border-radius: 2px; transition: width 0.3s; }
+
+    /* ── Production bars (in detail) ── */
+    .prod-service { padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .prod-service:last-child { border-bottom: none; }
+    .prod-service-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .prod-stations { display: flex; gap: 4px; margin-top: 4px; }
+    .prod-station { flex: 1; height: 6px; border-radius: 3px; background: var(--border); }
+    .prod-station.done { background: var(--success); }
+    .prod-station-labels { display: flex; gap: 4px; margin-top: 2px; }
+    .prod-station-labels span { flex: 1; font-size: 9px; text-align: center; color: var(--text-3); text-transform: uppercase; }
+    .despacho-badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 500; }
+    .despacho-pendiente { background: #fef3d1; color: #856404; }
+    .despacho-despachado { background: var(--accent-light); color: var(--accent); }
+    .despacho-en_obra { background: #dbeafe; color: #1d4ed8; }
+    .despacho-instalado { background: #d1fae5; color: #059669; }
+
+    /* ── Equipo (in detail) ── */
+    .equipo-list { display: flex; flex-direction: column; gap: 6px; }
+    .equipo-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--bg); border-radius: 6px; font-size: 13px; }
+    .equipo-row .equipo-avatar { margin-left: 0; flex-shrink: 0; }
+    .equipo-row .equipo-name { font-weight: 500; flex: 1; }
+    .equipo-row .equipo-rol { font-size: 11px; color: var(--text-3); }
+    .equipo-row .equipo-remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
+    .equipo-row .equipo-remove:hover { background: #fee2e2; }
+    .equipo-add-row { display: flex; gap: 8px; margin-top: 8px; }
+    .equipo-add-row select { flex: 1; }
+
+    /* ── Costos (in detail) ── */
+    .costos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .costos-block { padding: 14px; background: var(--bg); border-radius: 8px; }
+    .costos-block h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-2); }
+    .costos-line { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
+    .costos-line.total { font-weight: 700; border-top: 1px solid var(--border); padding-top: 6px; margin-top: 4px; }
+
     /* ── Responsive ── */
     @media (max-width: 1100px) {
       .kanban { grid-template-columns: repeat(2, 1fr); }
@@ -168,6 +265,9 @@
       .app-header { padding: 10px 16px; flex-wrap: wrap; }
       .nav-tabs { order: 3; width: 100%; justify-content: center; margin-left: 0; margin-top: 8px; }
       .container { padding: 12px; }
+      .detail-panel { width: 100vw; }
+      .detail-info { grid-template-columns: 1fr; }
+      .costos-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -308,11 +408,81 @@
   </div>
 </div>
 
-<!-- ═══ MODAL: DETALLE OBRA (placeholder para fase 2) ═══ -->
-<div class="modal-backdrop" id="modalDetalle">
-  <div class="modal" style="max-width:900px" onclick="event.stopPropagation()">
-    <h3 id="detalleTitle">Detalle de obra <button class="modal-close" onclick="closeModal('modalDetalle')">&times;</button></h3>
-    <div id="detalleContent"><div class="empty">Detalle de obra — se implementa en fase 2</div></div>
+<!-- ═══ DETAIL PANEL (slide-in) ═══ -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail()">
+  <div class="detail-backdrop"></div>
+  <div class="detail-panel" onclick="event.stopPropagation()">
+    <div class="detail-header">
+      <div>
+        <h2 id="detailName">—</h2>
+        <span class="obra-numero-lg" id="detailNumero"></span>
+      </div>
+      <span class="status" id="detailEstado"></span>
+      <button class="detail-close" onclick="closeDetail()">&times;</button>
+    </div>
+
+    <div class="detail-info" id="detailInfo"></div>
+
+    <div class="detail-tabs">
+      <button class="detail-tab active" onclick="switchDetailTab('general')">General</button>
+      <button class="detail-tab" onclick="switchDetailTab('timeline')">Timeline</button>
+      <button class="detail-tab" onclick="switchDetailTab('checklist')">Checklist</button>
+      <button class="detail-tab" onclick="switchDetailTab('costos')">Costos</button>
+    </div>
+
+    <!-- SUB-TAB: General -->
+    <div class="detail-tab-panel active" id="dtab-general">
+      <h4 style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-2)">Producción</h4>
+      <div id="detailProd"><div class="empty" style="padding:12px">Sin servicios vinculados</div></div>
+
+      <h4 style="font-size:13px;font-weight:600;margin:16px 0 10px;color:var(--text-2)">Equipo asignado</h4>
+      <div id="detailEquipo"></div>
+      <div class="equipo-add-row">
+        <select id="addColocadorSelect"><option value="">Agregar colocador...</option></select>
+        <select id="addColocadorRol"><option value="instalador">Instalador</option><option value="lider">Líder</option><option value="apoyo">Apoyo</option><option value="postventa">Postventa</option></select>
+        <button class="btn btn-sm btn-primary" onclick="addColocador()">+</button>
+      </div>
+    </div>
+
+    <!-- SUB-TAB: Timeline -->
+    <div class="detail-tab-panel" id="dtab-timeline">
+      <div class="timeline-actions">
+        <button class="btn btn-sm btn-secondary" onclick="addEvento('nota')">📝 Nota</button>
+        <button class="btn btn-sm btn-secondary" onclick="addEvento('incidencia')">⚠️ Incidencia</button>
+        <button class="btn btn-sm btn-secondary" onclick="addEvento('adicional')">➕ Adicional</button>
+      </div>
+      <div class="timeline" id="detailTimeline"><div class="empty">Sin eventos</div></div>
+    </div>
+
+    <!-- SUB-TAB: Checklist -->
+    <div class="detail-tab-panel" id="dtab-checklist">
+      <div id="detailChecklist"><div class="empty">Sin checklists</div></div>
+    </div>
+
+    <!-- SUB-TAB: Costos -->
+    <div class="detail-tab-panel" id="dtab-costos">
+      <div id="detailCostos"><div class="empty">Sin datos de costos</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EVENTO RÁPIDO ═══ -->
+<div class="modal-backdrop" id="modalEvento">
+  <div class="modal" style="max-width:480px" onclick="event.stopPropagation()">
+    <h3 id="eventoTitle">Nuevo evento <button class="modal-close" onclick="closeModal('modalEvento')">&times;</button></h3>
+    <input type="hidden" id="eventoTipo" />
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Colocador</label>
+      <select id="eventoColocador"></select>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Descripción</label>
+      <textarea id="eventoDesc" rows="3" placeholder="Describe el evento..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modalEvento')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEvento()">Guardar</button>
+    </div>
   </div>
 </div>
 
@@ -614,19 +784,321 @@ function sortList(field) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// DETALLE (placeholder — fase 2)
+// DETAIL PANEL — Full implementation
 // ═══════════════════════════════════════════════════════════════
-function openDetalle(id) {
+let currentObraId = null;
+let allColocadores = [];
+
+function closeDetail() { document.getElementById('detailOverlay').classList.remove('active'); currentObraId = null; }
+
+function switchDetailTab(tab) {
+  document.querySelectorAll('.detail-tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`dtab-${tab}`).classList.add('active');
+  event.target.classList.add('active');
+}
+
+async function openDetalle(id) {
+  currentObraId = id;
   const obra = obrasData.find(o => o.id === id);
   if (!obra) return;
-  document.getElementById('detalleTitle').innerHTML = `🏗️ ${esc(obra.nombre)} <span class="mono" style="font-size:12px;color:var(--text-3)">#OBR-${obra.numero}</span><button class="modal-close" onclick="closeModal('modalDetalle')">&times;</button>`;
-  document.getElementById('detalleContent').innerHTML = `<div class="empty">Detalle completo — fase 2<br><br>
-    <strong>Estado:</strong> ${ESTADO_LABELS[obra.estado]}<br>
-    <strong>Cliente:</strong> ${esc(obra.cliente_nombre || '—')}<br>
-    <strong>Producción:</strong> ${obra.pct_produccion}%<br>
-    <strong>Horas reales:</strong> ${obra.horas_reales || 0}h
-  </div>`;
-  openModal('modalDetalle');
+
+  // Reset to General tab
+  document.querySelectorAll('.detail-tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('dtab-general').classList.add('active');
+  document.querySelector('.detail-tab').classList.add('active');
+
+  // Header
+  document.getElementById('detailName').textContent = obra.nombre;
+  document.getElementById('detailNumero').textContent = `#OBR-${obra.numero}`;
+  const estadoEl = document.getElementById('detailEstado');
+  estadoEl.className = `status status-${obra.estado}`;
+  estadoEl.textContent = ESTADO_LABELS[obra.estado];
+
+  // Info grid
+  document.getElementById('detailInfo').innerHTML = `
+    <div><div class="di-label">Cliente</div><div class="di-value">${esc(obra.cliente_nombre || '—')}</div></div>
+    <div><div class="di-label">Dirección</div><div class="di-value">${esc(obra.direccion || '—')}</div></div>
+    <div><div class="di-label">Ciudad</div><div class="di-value">${esc(obra.ciudad || '—')}</div></div>
+    <div><div class="di-label">Prioridad</div><div class="di-value">${obra.prioridad}</div></div>
+    <div><div class="di-label">Inicio estimado</div><div class="di-value">${obra.fecha_inicio_estimada || '—'}</div></div>
+    <div><div class="di-label">Fin estimado</div><div class="di-value">${obra.fecha_fin_estimada || '—'}</div></div>
+    <div><div class="di-label">Inicio real</div><div class="di-value">${obra.fecha_inicio_real || '—'}</div></div>
+    <div><div class="di-label">Monto quote</div><div class="di-value">${obra.monto_quote ? `${obra.moneda} ${Number(obra.monto_quote).toLocaleString()}` : '—'}</div></div>
+  `;
+
+  document.getElementById('detailOverlay').classList.add('active');
+
+  // Load all data in parallel
+  await Promise.all([
+    loadDetailProd(id),
+    loadDetailEquipo(id),
+    loadDetailTimeline(id),
+    loadDetailChecklist(id),
+    loadDetailCostos(id)
+  ]);
+}
+
+// ── Production detail ──
+async function loadDetailProd(obraId) {
+  try {
+    const servicios = await sbQuery('v_obra_produccion_progress', `obra_id=eq.${obraId}&select=*`);
+    if (!servicios.length) {
+      document.getElementById('detailProd').innerHTML = '<div class="empty" style="padding:12px;font-size:12px">Sin servicios vinculados</div>';
+      return;
+    }
+    document.getElementById('detailProd').innerHTML = servicios.map(s => {
+      const stations = s.stations || {};
+      return `<div class="prod-service">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="prod-service-name">${esc(s.service_name || `SVC ${s.service_id}`)}</div>
+          <span class="despacho-badge despacho-${s.despacho_estado}">${s.despacho_estado}</span>
+        </div>
+        <div class="prod-stations">
+          <div class="prod-station ${stations.corte === 'completed' ? 'done' : ''}"></div>
+          <div class="prod-station ${stations.enchape === 'completed' ? 'done' : ''}"></div>
+          <div class="prod-station ${stations.mecanizado === 'completed' ? 'done' : ''}"></div>
+          <div class="prod-station ${stations.packing === 'completed' ? 'done' : ''}"></div>
+        </div>
+        <div class="prod-station-labels"><span>Corte</span><span>Enchape</span><span>CNC</span><span>Packing</span></div>
+      </div>`;
+    }).join('');
+  } catch (e) { console.error('Prod detail error:', e); }
+}
+
+// ── Equipo detail ──
+async function loadDetailEquipo(obraId) {
+  try {
+    // Load all colocadores for the add selector
+    if (!allColocadores.length) {
+      allColocadores = await sbQuery('colocadores', 'activo=eq.true&select=id,nombre,rol,color&order=nombre');
+    }
+
+    const asignaciones = await sbQuery('obra_asignaciones', `obra_id=eq.${obraId}&activo=eq.true&select=*,colocadores(id,nombre,color,rol,costo_hora)`);
+
+    const container = document.getElementById('detailEquipo');
+    if (!asignaciones.length) {
+      container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px 0">Sin colocadores asignados</div>';
+    } else {
+      container.innerHTML = '<div class="equipo-list">' + asignaciones.map(a => {
+        const c = a.colocadores || {};
+        return `<div class="equipo-row">
+          <div class="equipo-avatar" style="background:${c.color || '#888'}">${(c.nombre||'?')[0]}</div>
+          <span class="equipo-name">${esc(c.nombre)}</span>
+          <span class="equipo-rol">${a.rol_en_obra}</span>
+          <button class="equipo-remove" onclick="removeColocador('${a.id}')" title="Quitar">✕</button>
+        </div>`;
+      }).join('') + '</div>';
+    }
+
+    // Populate add selector (exclude already assigned)
+    const assignedIds = new Set(asignaciones.map(a => a.colocador_id));
+    const available = allColocadores.filter(c => !assignedIds.has(c.id));
+    document.getElementById('addColocadorSelect').innerHTML = '<option value="">Agregar colocador...</option>' +
+      available.map(c => `<option value="${c.id}">${esc(c.nombre)} (${c.rol})</option>`).join('');
+
+  } catch (e) { console.error('Equipo error:', e); }
+}
+
+async function addColocador() {
+  const colocadorId = document.getElementById('addColocadorSelect').value;
+  if (!colocadorId || !currentObraId) return;
+  const rol = document.getElementById('addColocadorRol').value;
+  try {
+    await sbMutate('obra_asignaciones', 'POST', [{ obra_id: currentObraId, colocador_id: colocadorId, rol_en_obra: rol }]);
+    toast('Colocador asignado', 'success');
+    await loadDetailEquipo(currentObraId);
+    await loadKanban(); renderLista();
+  } catch (e) { toast('Error: ' + e.message, 'error'); }
+}
+
+async function removeColocador(asignacionId) {
+  try {
+    await sbMutate('obra_asignaciones', 'PATCH', { activo: false }, `id=eq.${asignacionId}`);
+    toast('Colocador removido', 'info');
+    await loadDetailEquipo(currentObraId);
+    await loadKanban(); renderLista();
+  } catch (e) { toast('Error: ' + e.message, 'error'); }
+}
+
+// ── Timeline ──
+const EVENTO_ICONS = {
+  check_in: '📍', check_out: '🚪', foto: '📸', nota: '📝',
+  incidencia: '⚠️', adicional: '➕', estado_cambio: '🔄', entrega: '📦', firma: '✍️'
+};
+
+async function loadDetailTimeline(obraId) {
+  try {
+    const eventos = await sbQuery('obra_eventos', `obra_id=eq.${obraId}&order=created_at.desc&limit=50&select=*`);
+    const container = document.getElementById('detailTimeline');
+    if (!eventos.length) {
+      container.innerHTML = '<div class="empty" style="padding:16px;font-size:12px">Sin eventos registrados</div>';
+      return;
+    }
+    container.innerHTML = eventos.map(ev => {
+      const dt = new Date(ev.created_at);
+      const fecha = dt.toLocaleDateString('es-UY', { day:'2-digit', month:'short' });
+      const hora = dt.toLocaleTimeString('es-UY', { hour:'2-digit', minute:'2-digit' });
+      const fotos = typeof ev.fotos === 'string' ? JSON.parse(ev.fotos) : (ev.fotos || []);
+
+      return `<div class="timeline-item">
+        <div class="timeline-icon ${ev.tipo}">${EVENTO_ICONS[ev.tipo] || '•'}</div>
+        <div class="timeline-body">
+          <div class="timeline-meta">
+            <span>${fecha} ${hora}</span>
+            ${ev.colocador_nombre ? `<span>· ${esc(ev.colocador_nombre)}</span>` : ''}
+            <span style="text-transform:capitalize">· ${ev.tipo.replace('_',' ')}</span>
+          </div>
+          ${ev.descripcion ? `<div class="timeline-desc">${esc(ev.descripcion)}</div>` : ''}
+          ${fotos.length ? `<div class="timeline-photos">${fotos.map(f => `<img class="timeline-photo" src="${SUPABASE_URL}/storage/v1/object/public/${f}" onclick="window.open(this.src)" />`).join('')}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) { console.error('Timeline error:', e); }
+}
+
+// ── Add evento ──
+function addEvento(tipo) {
+  document.getElementById('eventoTipo').value = tipo;
+  const labels = { nota: '📝 Nueva Nota', incidencia: '⚠️ Reportar Incidencia', adicional: '➕ Trabajo Adicional' };
+  document.getElementById('eventoTitle').innerHTML = `${labels[tipo] || 'Nuevo evento'} <button class="modal-close" onclick="closeModal('modalEvento')">&times;</button>`;
+  document.getElementById('eventoDesc').value = '';
+
+  // Populate colocador select
+  document.getElementById('eventoColocador').innerHTML = '<option value="">Sin colocador</option>' +
+    allColocadores.map(c => `<option value="${c.id}" data-nombre="${esc(c.nombre)}">${esc(c.nombre)}</option>`).join('');
+
+  openModal('modalEvento');
+}
+
+async function saveEvento() {
+  const tipo = document.getElementById('eventoTipo').value;
+  const desc = document.getElementById('eventoDesc').value.trim();
+  if (!desc) { toast('Descripción requerida', 'error'); return; }
+
+  const colSel = document.getElementById('eventoColocador');
+  const colocadorId = colSel.value || null;
+  const colocadorNombre = colSel.selectedOptions[0]?.dataset?.nombre || null;
+
+  try {
+    await sbMutate('obra_eventos', 'POST', [{
+      obra_id: currentObraId,
+      tipo,
+      descripcion: desc,
+      colocador_id: colocadorId,
+      colocador_nombre: colocadorNombre
+    }]);
+    toast('Evento registrado', 'success');
+    closeModal('modalEvento');
+    await loadDetailTimeline(currentObraId);
+  } catch (e) { toast('Error: ' + e.message, 'error'); }
+}
+
+// ── Checklist ──
+async function loadDetailChecklist(obraId) {
+  try {
+    const checklists = await sbQuery('obra_checklist', `obra_id=eq.${obraId}&select=*,obra_checklist_items(*)&order=orden`);
+    const container = document.getElementById('detailChecklist');
+
+    if (!checklists.length) {
+      container.innerHTML = '<div class="empty" style="padding:16px;font-size:12px">Sin checklists. Creá la obra desde una quote para auto-generar.</div>';
+      return;
+    }
+
+    container.innerHTML = checklists.map(cl => {
+      const items = cl.obra_checklist_items || [];
+      items.sort((a,b) => (a.orden||0) - (b.orden||0));
+      const done = items.filter(i => i.checked).length;
+      const total = items.length;
+      const pct = total > 0 ? Math.round(done / total * 100) : 0;
+
+      return `<div class="checklist-section">
+        <div class="checklist-ambiente" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? '' : 'none'">
+          ${cl.completado ? '✅' : '📋'} ${esc(cl.ambiente)}
+          <span class="amb-progress">${done}/${total} (${pct}%)</span>
+        </div>
+        <div class="checklist-items">
+          <div class="checklist-bar"><div class="checklist-bar-fill" style="width:${pct}%"></div></div>
+          ${items.map(it => `<div class="checklist-item ${it.checked ? 'checked' : ''}">
+            <input type="checkbox" ${it.checked ? 'checked' : ''} onchange="toggleCheckItem('${it.id}', this.checked, '${cl.id}')" />
+            <span class="ck-label">${esc(it.label)}</span>
+            ${it.checked_at ? `<span class="ck-meta">${new Date(it.checked_at).toLocaleDateString('es-UY', {day:'2-digit',month:'short'})}</span>` : ''}
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) { console.error('Checklist error:', e); }
+}
+
+async function toggleCheckItem(itemId, checked, checklistId) {
+  try {
+    const update = { checked, checked_at: checked ? new Date().toISOString() : null };
+    await sbMutate('obra_checklist_items', 'PATCH', update, `id=eq.${itemId}`);
+
+    // Check if all items in checklist are done
+    const items = await sbQuery('obra_checklist_items', `checklist_id=eq.${checklistId}&select=checked`);
+    const allDone = items.every(i => i.checked);
+    if (allDone) {
+      await sbMutate('obra_checklist', 'PATCH', { completado: true, completado_at: new Date().toISOString() }, `id=eq.${checklistId}`);
+    } else {
+      await sbMutate('obra_checklist', 'PATCH', { completado: false, completado_at: null }, `id=eq.${checklistId}`);
+    }
+
+    await loadDetailChecklist(currentObraId);
+    await loadKanban(); renderLista();
+  } catch (e) { toast('Error: ' + e.message, 'error'); }
+}
+
+// ── Costos ──
+async function loadDetailCostos(obraId) {
+  try {
+    const obra = obrasData.find(o => o.id === obraId);
+    if (!obra) return;
+
+    let horasHtml = '<div style="font-size:12px;color:var(--text-3)">Sin horas registradas</div>';
+    let costoHoras = 0;
+
+    try {
+      const [resumen] = await sbQuery('v_obra_horas_resumen', `obra_id=eq.${obraId}&select=*`);
+      if (resumen && resumen.horas_totales > 0) {
+        const detalle = typeof resumen.detalle_colocadores === 'string' ? JSON.parse(resumen.detalle_colocadores) : (resumen.detalle_colocadores || []);
+
+        // Get colocador costs
+        const colMap = {};
+        allColocadores.forEach(c => { colMap[c.nombre] = c; });
+
+        horasHtml = detalle.map(d => {
+          const rate = colMap[d.colocador]?.costo_hora || 10.70;
+          const costo = d.horas * rate;
+          costoHoras += costo;
+          return `<div class="costos-line"><span>${esc(d.colocador)} — ${d.horas}h × $${rate}</span><span class="mono">$${costo.toFixed(2)}</span></div>`;
+        }).join('') + `<div class="costos-line total"><span>Total horas</span><span class="mono">$${costoHoras.toFixed(2)}</span></div>`;
+      }
+    } catch (_) {}
+
+    const adicionales = obra.costos_adicionales || 0;
+    const totalReal = costoHoras + Number(adicionales);
+    const montoQuote = Number(obra.monto_quote) || 0;
+    const margen = montoQuote > 0 ? ((montoQuote - totalReal) / montoQuote * 100) : 0;
+
+    document.getElementById('detailCostos').innerHTML = `
+      <div class="costos-grid">
+        <div class="costos-block">
+          <h4>Horas de trabajo</h4>
+          ${horasHtml}
+        </div>
+        <div class="costos-block">
+          <h4>Resumen financiero</h4>
+          <div class="costos-line"><span>Monto quote</span><span class="mono">${obra.moneda || '$'} ${montoQuote.toLocaleString()}</span></div>
+          <div class="costos-line"><span>Costo horas</span><span class="mono">$${costoHoras.toFixed(2)}</span></div>
+          <div class="costos-line"><span>Costos adicionales</span><span class="mono">$${Number(adicionales).toFixed(2)}</span></div>
+          <div class="costos-line total"><span>Costo real total</span><span class="mono">$${totalReal.toFixed(2)}</span></div>
+          ${montoQuote > 0 ? `<div class="costos-line" style="margin-top:8px"><span>Margen</span><span class="mono" style="color:${margen >= 0 ? 'var(--success)' : 'var(--danger)'}">${margen.toFixed(1)}%</span></div>` : ''}
+        </div>
+      </div>
+    `;
+  } catch (e) { console.error('Costos error:', e); }
 }
 
 // ═══════════════════════════════════════════════════════════════
