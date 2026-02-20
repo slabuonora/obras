@@ -947,7 +947,14 @@ async function addColocador() {
   if (!colocadorId || !currentObraId) return;
   const rol = document.getElementById('addColocadorRol').value;
   try {
-    await sbMutate('obra_asignaciones', 'POST', [{ obra_id: currentObraId, colocador_id: colocadorId, rol_en_obra: rol }]);
+    // Check if there's an inactive assignment (soft-deleted)
+    const existing = await sbQuery('obra_asignaciones', `obra_id=eq.${currentObraId}&colocador_id=eq.${colocadorId}&select=id,activo`);
+    if (existing.length > 0) {
+      // Reactivate existing record
+      await sbMutate('obra_asignaciones', 'PATCH', { activo: true, rol_en_obra: rol }, `id=eq.${existing[0].id}`);
+    } else {
+      await sbMutate('obra_asignaciones', 'POST', [{ obra_id: currentObraId, colocador_id: colocadorId, rol_en_obra: rol }]);
+    }
     toast('Colocador asignado', 'success');
     await loadDetailEquipo(currentObraId);
     await loadKanban(); renderLista();
