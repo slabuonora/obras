@@ -150,6 +150,58 @@
     .wa-badge-recordatorio { background: #fef3d1; color: #92690a; }
     .wa-section-title { font-size: 13px; font-weight: 600; color: var(--text-2); margin-top: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
 
+    /* ── Detalle tabs ── */
+    .detalle-tabs { display: flex; gap: 2px; background: var(--bg); border-radius: 8px; padding: 3px; margin-bottom: 16px; }
+    .detalle-tab { padding: 6px 12px; font-size: 12px; font-weight: 500; font-family: inherit; border: none; background: transparent; color: var(--text-3); cursor: pointer; border-radius: 6px; transition: all 0.15s; white-space: nowrap; }
+    .detalle-tab:hover { color: var(--text); background: var(--surface); }
+    .detalle-tab.active { background: var(--accent); color: white; font-weight: 600; }
+    .detalle-panel { display: none; }
+    .detalle-panel.active { display: block; }
+
+    /* ── Info grid ── */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
+    .info-item { padding: 8px 12px; background: var(--bg); border-radius: 6px; }
+    .info-item label { font-size: 11px; color: var(--text-3); margin-bottom: 2px; }
+    .info-item .info-val { font-weight: 500; color: var(--text); }
+    @media(max-width:600px) { .info-grid { grid-template-columns: 1fr; } }
+
+    /* ── Events timeline ── */
+    .ev-timeline { position: relative; padding-left: 24px; }
+    .ev-timeline::before { content: ''; position: absolute; left: 8px; top: 8px; bottom: 8px; width: 2px; background: var(--border); }
+    .ev-item { position: relative; padding: 8px 0 12px 12px; font-size: 12.5px; }
+    .ev-item::before { content: ''; position: absolute; left: -20px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--border); border: 2px solid var(--surface); z-index: 1; }
+    .ev-item.ev-check_in::before { background: var(--success); }
+    .ev-item.ev-check_out::before { background: var(--warn); }
+    .ev-item.ev-incidencia::before { background: var(--danger); }
+    .ev-item.ev-foto::before { background: var(--accent); }
+    .ev-item.ev-nota::before { background: var(--text-3); }
+    .ev-item.ev-estado_cambio::before { background: #9b59b6; }
+    .ev-desc { color: var(--text); }
+    .ev-meta { color: var(--text-3); font-size: 11px; margin-top: 2px; }
+
+    /* ── Fotos grid ── */
+    .fotos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+    .foto-thumb { border-radius: 8px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 1px solid var(--border); position: relative; }
+    .foto-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .foto-thumb .foto-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); color: white; font-size: 10px; padding: 16px 6px 4px; }
+
+    /* ── Checklist detalle ── */
+    .ck-ambiente { margin-bottom: 14px; }
+    .ck-ambiente-title { font-size: 13px; font-weight: 600; color: var(--text); padding: 6px 0; display: flex; justify-content: space-between; align-items: center; }
+    .ck-ambiente-pct { font-size: 11px; font-family: var(--mono); color: var(--text-3); }
+    .ck-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 12.5px; color: var(--text-2); }
+    .ck-item.checked { color: var(--text-3); text-decoration: line-through; }
+    .ck-item .ck-check { font-size: 14px; }
+
+    /* ── Equipo detalle ── */
+    .equipo-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .equipo-row:last-child { border-bottom: none; }
+    .equipo-avatar-lg { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+    .equipo-info { flex: 1; }
+    .equipo-info .eq-name { font-weight: 600; color: var(--text); }
+    .equipo-info .eq-role { font-size: 11px; color: var(--text-3); }
+    .equipo-hours { font-family: var(--mono); font-size: 13px; color: var(--accent); font-weight: 600; }
+
     /* ── Modal ── */
     .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; align-items: center; justify-content: center; }
     .modal-backdrop.active { display: flex; }
@@ -701,25 +753,195 @@ async function openDetalle(id) {
   const obra = obrasData.find(o => o.id === id);
   if (!obra) return;
   document.getElementById('detalleTitle').innerHTML = `🏗️ ${esc(obra.nombre)} <span class="mono" style="font-size:12px;color:var(--text-3)">#OBR-${obra.numero}</span><button class="modal-close" onclick="closeModal('modalDetalle')">&times;</button>`;
-  
-  // Contenido básico + placeholder WhatsApp
+
+  const equipo = typeof obra.equipo === 'string' ? JSON.parse(obra.equipo) : (obra.equipo || []);
+  const checkPct = obra.checklist_total > 0 ? Math.round(obra.checklist_completados / obra.checklist_total * 100) : 0;
+
   document.getElementById('detalleContent').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;margin-bottom:16px">
-      <div><strong>Estado:</strong> ${ESTADO_LABELS[obra.estado]}</div>
-      <div><strong>Cliente:</strong> ${esc(obra.cliente_nombre || '—')}</div>
-      <div><strong>Producción:</strong> ${obra.pct_produccion}%</div>
-      <div><strong>Horas reales:</strong> ${obra.horas_reales || 0}h</div>
-      <div><strong>Checklist:</strong> ${obra.checklist_completados}/${obra.checklist_total}</div>
-      <div><strong>Días en obra:</strong> ${obra.dias_en_obra || 0}</div>
+    <div class="detalle-tabs">
+      <button class="detalle-tab active" onclick="switchDetalleTab('info')">Info</button>
+      <button class="detalle-tab" onclick="switchDetalleTab('eventos')">Eventos</button>
+      <button class="detalle-tab" onclick="switchDetalleTab('checklist')">Checklist</button>
+      <button class="detalle-tab" onclick="switchDetalleTab('fotos')">Fotos</button>
+      <button class="detalle-tab" onclick="switchDetalleTab('equipo')">Equipo (${equipo.length})</button>
+      <button class="detalle-tab" onclick="switchDetalleTab('whatsapp')">📱 WhatsApp</button>
     </div>
-    <div class="wa-section-title">📱 Reportes WhatsApp</div>
-    <div id="waTimelineContainer"><div style="padding:12px;text-align:center"><div class="spinner"></div></div></div>
+
+    <div class="detalle-panel active" id="dp-info">
+      <div class="info-grid">
+        <div class="info-item"><label>Estado</label><div class="info-val">${ESTADO_LABELS[obra.estado]}</div></div>
+        <div class="info-item"><label>Prioridad</label><div class="info-val">${obra.prioridad || 'normal'}</div></div>
+        <div class="info-item"><label>Cliente</label><div class="info-val">${esc(obra.cliente_nombre || '—')}</div></div>
+        <div class="info-item"><label>Dirección</label><div class="info-val">${esc(obra.direccion || '—')}</div></div>
+        <div class="info-item"><label>Ciudad</label><div class="info-val">${esc(obra.ciudad || '—')}</div></div>
+        <div class="info-item"><label>Producción</label><div class="info-val">
+          <div class="progress-bar" style="margin:4px 0"><div class="progress-bar-fill" style="width:${obra.pct_produccion}%;background:${obra.produccion_completa ? 'var(--success)' : 'var(--accent)'}"></div></div>
+          <span class="mono" style="font-size:11px">${obra.pct_produccion}% — ${obra.servicios_completados}/${obra.total_servicios} servicios</span>
+        </div></div>
+        <div class="info-item"><label>Checklist</label><div class="info-val mono">${obra.checklist_completados}/${obra.checklist_total} items (${checkPct}%)</div></div>
+        <div class="info-item"><label>Horas estimadas</label><div class="info-val mono">${obra.horas_estimadas || '—'}h</div></div>
+        <div class="info-item"><label>Horas reales</label><div class="info-val mono">${obra.horas_reales || 0}h</div></div>
+        <div class="info-item"><label>Días en obra</label><div class="info-val mono">${obra.dias_en_obra || 0}</div></div>
+        <div class="info-item"><label>Inicio estimado</label><div class="info-val">${obra.fecha_inicio_estimada || '—'}</div></div>
+        <div class="info-item"><label>Inicio real</label><div class="info-val">${obra.fecha_inicio_real || '—'}</div></div>
+        ${obra.monto_quote ? `<div class="info-item"><label>Monto quote</label><div class="info-val mono">${obra.moneda || '$'} ${Number(obra.monto_quote).toLocaleString()}</div></div>` : ''}
+      </div>
+      ${obra.notas ? `<div style="margin-top:12px;padding:10px 12px;background:var(--bg);border-radius:6px;font-size:12.5px;color:var(--text-2)"><strong>Notas:</strong> ${esc(obra.notas)}</div>` : ''}
+    </div>
+
+    <div class="detalle-panel" id="dp-eventos">
+      <div id="eventosContainer"><div style="padding:12px;text-align:center"><div class="spinner"></div></div></div>
+    </div>
+
+    <div class="detalle-panel" id="dp-checklist">
+      <div id="checklistContainer"><div style="padding:12px;text-align:center"><div class="spinner"></div></div></div>
+    </div>
+
+    <div class="detalle-panel" id="dp-fotos">
+      <div id="fotosContainer"><div style="padding:12px;text-align:center"><div class="spinner"></div></div></div>
+    </div>
+
+    <div class="detalle-panel" id="dp-equipo">
+      <div id="equipoContainer">
+        ${equipo.length === 0 ? '<div class="empty" style="padding:20px">Sin equipo asignado</div>' :
+          equipo.map(c => `<div class="equipo-row">
+            <div class="equipo-avatar-lg" style="background:${c.color || '#888'}">${(c.nombre||'?')[0]}</div>
+            <div class="equipo-info"><div class="eq-name">${esc(c.nombre)}</div><div class="eq-role">${esc(c.rol || 'Colocador')}</div></div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="detalle-panel" id="dp-whatsapp">
+      <div id="waTimelineContainer"><div style="padding:12px;text-align:center"><div class="spinner"></div></div></div>
+    </div>
   `;
   openModal('modalDetalle');
 
-  // Cargar timeline WhatsApp async
-  const msgs = await loadWhatsAppTimeline(id);
-  document.getElementById('waTimelineContainer').innerHTML = renderWaTimeline(msgs);
+  // Cargar datos async en paralelo
+  loadDetalleEventos(id);
+  loadDetalleChecklist(id);
+  loadDetalleFotos(id);
+  loadDetalleEquipoHoras(id, equipo);
+  loadWhatsAppTimeline(id).then(msgs => {
+    document.getElementById('waTimelineContainer').innerHTML = renderWaTimeline(msgs);
+  });
+}
+
+function switchDetalleTab(tab) {
+  document.querySelectorAll('.detalle-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.detalle-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.detalle-tab[onclick*="${tab}"]`)?.classList.add('active');
+  document.getElementById(`dp-${tab}`)?.classList.add('active');
+}
+
+async function loadDetalleEventos(obraId) {
+  try {
+    const eventos = await sbQuery('obra_eventos',
+      `obra_id=eq.${obraId}&order=created_at.desc&limit=50&select=id,tipo,descripcion,colocador_nombre,fotos,metadata,created_at`);
+    if (!eventos || eventos.length === 0) {
+      document.getElementById('eventosContainer').innerHTML = '<div class="empty" style="padding:20px">Sin eventos registrados</div>';
+      return;
+    }
+    const EVT_ICONS = { check_in:'✅', check_out:'👋', incidencia:'⚠️', foto:'📸', nota:'📝', estado_cambio:'🔄', despacho:'📦' };
+    document.getElementById('eventosContainer').innerHTML = `<div class="ev-timeline">${eventos.map(e => {
+      const time = new Date(e.created_at).toLocaleString('es-UY', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', timeZone:'America/Montevideo' });
+      return `<div class="ev-item ev-${e.tipo}">
+        <div class="ev-desc">${EVT_ICONS[e.tipo] || '•'} <strong>${e.tipo.replace(/_/g,' ')}</strong> ${esc(e.descripcion || '')}</div>
+        <div class="ev-meta">${time} · ${esc(e.colocador_nombre || 'Sistema')}</div>
+      </div>`;
+    }).join('')}</div>`;
+  } catch(err) {
+    document.getElementById('eventosContainer').innerHTML = '<div class="empty">Error cargando eventos</div>';
+  }
+}
+
+async function loadDetalleChecklist(obraId) {
+  try {
+    const checklists = await sbQuery('obra_checklist',
+      `obra_id=eq.${obraId}&select=id,ambiente,completado,completado_por,completado_at`);
+    if (!checklists || checklists.length === 0) {
+      document.getElementById('checklistContainer').innerHTML = '<div class="empty" style="padding:20px">Sin checklist configurado</div>';
+      return;
+    }
+    let html = '';
+    for (const cl of checklists) {
+      const items = await sbQuery('obra_checklist_items',
+        `checklist_id=eq.${cl.id}&order=id.asc&select=id,label,checked,checked_por,checked_at`);
+      const done = (items || []).filter(i => i.checked).length;
+      const total = (items || []).length;
+      const pct = total > 0 ? Math.round(done / total * 100) : 0;
+      html += `<div class="ck-ambiente">
+        <div class="ck-ambiente-title">${cl.completado ? '✅' : '📋'} ${esc(cl.ambiente)} <span class="ck-ambiente-pct">${done}/${total} (${pct}%)</span></div>
+        ${(items || []).map(i => `<div class="ck-item ${i.checked ? 'checked' : ''}">
+          <span class="ck-check">${i.checked ? '☑' : '☐'}</span>
+          ${esc(i.label)}
+          ${i.checked_por ? `<span style="font-size:10px;color:var(--text-3);margin-left:auto">${esc(i.checked_por)}</span>` : ''}
+        </div>`).join('')}
+      </div>`;
+    }
+    document.getElementById('checklistContainer').innerHTML = html;
+  } catch(err) {
+    document.getElementById('checklistContainer').innerHTML = '<div class="empty">Error cargando checklist</div>';
+  }
+}
+
+async function loadDetalleFotos(obraId) {
+  try {
+    const eventos = await sbQuery('obra_eventos',
+      `obra_id=eq.${obraId}&tipo=eq.foto&order=created_at.desc&select=id,descripcion,fotos,colocador_nombre,created_at`);
+    
+    // También incluir fotos de otros tipos de eventos
+    const otrosConFotos = await sbQuery('obra_eventos',
+      `obra_id=eq.${obraId}&tipo=neq.foto&fotos=not.eq.[]&fotos=not.is.null&order=created_at.desc&select=id,tipo,descripcion,fotos,colocador_nombre,created_at`);
+    
+    const allFotos = [...(eventos || []), ...(otrosConFotos || [])];
+    
+    if (allFotos.length === 0) {
+      document.getElementById('fotosContainer').innerHTML = '<div class="empty" style="padding:20px">Sin fotos registradas</div>';
+      return;
+    }
+    
+    let fotosHtml = [];
+    for (const ev of allFotos) {
+      const fotos = typeof ev.fotos === 'string' ? JSON.parse(ev.fotos) : (ev.fotos || []);
+      for (const url of fotos) {
+        if (!url) continue;
+        const time = new Date(ev.created_at).toLocaleString('es-UY', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', timeZone:'America/Montevideo' });
+        fotosHtml.push(`<div class="foto-thumb" onclick="window.open('${url}','_blank')">
+          <img src="${url}" loading="lazy" alt="${esc(ev.descripcion || '')}" />
+          <div class="foto-caption">${esc(ev.descripcion || ev.tipo)} · ${time}</div>
+        </div>`);
+      }
+    }
+    
+    document.getElementById('fotosContainer').innerHTML = fotosHtml.length > 0
+      ? `<div class="fotos-grid">${fotosHtml.join('')}</div>`
+      : '<div class="empty" style="padding:20px">Sin fotos registradas</div>';
+  } catch(err) {
+    document.getElementById('fotosContainer').innerHTML = '<div class="empty">Error cargando fotos</div>';
+  }
+}
+
+async function loadDetalleEquipoHoras(obraId, equipo) {
+  if (!equipo || equipo.length === 0) return;
+  try {
+    const horas = await sbQuery('v_obra_horas_reales',
+      `obra_id=eq.${obraId}&select=colocador_id,colocador_nombre,horas_reales,sesiones`);
+    const horasMap = {};
+    for (const h of (horas || [])) { horasMap[h.colocador_id] = h; }
+    
+    document.getElementById('equipoContainer').innerHTML = equipo.map(c => {
+      const h = horasMap[c.id];
+      return `<div class="equipo-row">
+        <div class="equipo-avatar-lg" style="background:${c.color || '#888'}">${(c.nombre||'?')[0]}</div>
+        <div class="equipo-info">
+          <div class="eq-name">${esc(c.nombre)}</div>
+          <div class="eq-role">${esc(c.rol || 'Colocador')}${h ? ` · ${h.sesiones} sesiones` : ''}</div>
+        </div>
+        ${h ? `<div class="equipo-hours">${h.horas_reales}h</div>` : '<div class="equipo-hours" style="color:var(--text-3)">0h</div>'}
+      </div>`;
+    }).join('');
+  } catch(err) { /* keep original equipo render */ }
 }
 
 // ═══════════════════════════════════════════════════════════════
