@@ -1130,6 +1130,32 @@ async function init() {
   } finally {
     hideLoading();
   }
+  // Check if coming from comercial.html with a quote to create obra
+  checkUrlParams();
+}
+
+// Detectar si venimos desde comercial.html con una quote para crear obra
+function checkUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const action = params.get('action');
+  const quoteId = params.get('quote_id');
+
+  if (action === 'crear_desde_quote' && quoteId) {
+    // Limpiar URL sin recargar
+    window.history.replaceState({}, '', window.location.pathname);
+    // Abrir modal nueva obra con quote pre-seleccionada
+    setTimeout(() => {
+      showNuevaObra();
+      // Esperar a que el modal y los datos carguen, luego seleccionar la quote
+      setTimeout(() => {
+        const sel = document.getElementById('nQuoteSelect');
+        if (sel) {
+          sel.value = quoteId;
+          onQuoteSelect(quoteId);
+        }
+      }, 500);
+    }, 300);
+  }
 }
 
 init();
